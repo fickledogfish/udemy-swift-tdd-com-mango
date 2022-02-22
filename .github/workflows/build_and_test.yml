@@ -1,0 +1,28 @@
+name: Build and test the app
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: macos-latest
+
+    env:
+      PROJECT_TYPE: project
+      PROJECT_FILE: CleanApp/CleanApp.xcodeproj
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          xcodebuild -"$PROJECT_TYPE" "$PROJECT_FILE"
+
+      - name: Lint
+        run: |
+          swiftlint
+
+      - name: Run data layer tests
+        run: |
+          xcodebuild test -"$PROJECT_TYPE" "$PROJECT_FILE" -scheme DataTests
