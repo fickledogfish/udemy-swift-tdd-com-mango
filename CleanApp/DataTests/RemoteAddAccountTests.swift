@@ -26,12 +26,7 @@ class RemoteAddAccountTests: XCTestCase {
         let url = URL(string: "https://xkcd.com")!
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
-        let addAccountModel = AddAccountModel(
-            name: "Any Name",
-            email: "any.name@example.com",
-            password: "pass",
-            passwordConfirmation: "pass"
-        )
+        let addAccountModel = makeAddAccountModel()
 
         // Act
         sut.add(account: addAccountModel)
@@ -45,12 +40,7 @@ class RemoteAddAccountTests: XCTestCase {
         let url = URL(string: "https://xkcd.com")!
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
-        let addAccountModel = AddAccountModel(
-            name: "Any Name",
-            email: "any.name@example.com",
-            password: "pass",
-            passwordConfirmation: "pass"
-        )
+        let addAccountModel = makeAddAccountModel()
         let data = try? JSONEncoder().encode(addAccountModel)
 
         // Act
@@ -64,6 +54,15 @@ class RemoteAddAccountTests: XCTestCase {
 // MARK: - RemoteAddAccountTests helpers
 
 extension RemoteAddAccountTests {
+    func makeAddAccountModel() -> AddAccountModel {
+        AddAccountModel(
+            name: "Any Name",
+            email: "any.name@example.com",
+            password: "pass",
+            passwordConfirmation: "pass"
+        )
+    }
+
     class HttpClientSpy: HttpPostClient {
         var url: URL?
         var data: Data?
