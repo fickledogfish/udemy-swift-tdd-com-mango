@@ -1,7 +1,7 @@
 import XCTest
 
 class RemoteAddAccountTests: XCTestCase {
-    func test() throws {
+    func test_add_should_call_httpClient_with_correct_url() throws {
         // Arrange
         let url = URL(string: "https://xkcd.com")!
         let httpClientSpy = HttpClientSpy()
