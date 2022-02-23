@@ -23,6 +23,5 @@ jobs:
         run: |
           swiftlint
 
-      - name: Run data layer tests
-        run: |
-          xcodebuild test -"$PROJECT_TYPE" "$PROJECT_FILE" -scheme DataTests
+      - name: Run tests
+        run: sh .github/workflows/scripts/run_tests.sh
