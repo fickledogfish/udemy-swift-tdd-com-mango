@@ -81,20 +81,36 @@ extension RemoteAddAccountTests {
     func expect(
         _ sut: RemoteAddAccount,
         completeWith expectedResult: Result<AccountModel, DomainError>,
-        when action: () -> Void
+        when action: () -> Void,
+        file: StaticString = #file,
+        line: UInt = #line
     ){
         let exp = expectation(description: "waiting")
 
         sut.add(account: makeAddAccountModel()) { receivedResult in
             switch (expectedResult, receivedResult) {
             case (.failure(let expectedError), .failure(let receivedError)):
-                XCTAssertEqual(expectedError, receivedError)
+                XCTAssertEqual(
+                    expectedError,
+                    receivedError,
+                    file: file,
+                    line: line
+                )
 
             case (.success(let expectedAccount), .success(let receivedAccount)):
-                XCTAssertEqual(expectedAccount, receivedAccount)
+                XCTAssertEqual(
+                    expectedAccount,
+                    receivedAccount,
+                    file: file,
+                    line: line
+                )
 
             default:
-                XCTFail("Expected \(expectedResult), but got \(receivedResult) instead")
+                XCTFail(
+                    "Expected \(expectedResult), but got \(receivedResult) instead",
+                    file: file,
+                    line: line
+                )
             }
 
             exp.fulfill()
