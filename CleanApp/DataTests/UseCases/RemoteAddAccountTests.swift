@@ -28,7 +28,7 @@ class RemoteAddAccountTests: XCTestCase {
         XCTAssertEqual(httpClientSpy.data, addAccountModel.toData())
     }
 
-    func test_add_should_complete_with_error_if_client_fails() {
+    func test_add_should_complete_with_error_if_client_completes_with_error() {
         // Arrange
         let (sut, httpClientSpy) = makeSut()
         let addAccountModel = makeAddAccountModel()
