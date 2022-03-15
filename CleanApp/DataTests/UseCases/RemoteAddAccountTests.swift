@@ -51,6 +51,31 @@ class RemoteAddAccountTests: XCTestCase {
         httpClientSpy.completeWith(error: .noConnectivity)
         wait(for: [exp], timeout: 1)
     }
+
+    func test_add_should_complete_with_account_if_client_completes_with_data() {
+        // Arrange
+        let (sut, httpClientSpy) = makeSut()
+        let addAccountModel = makeAddAccountModel()
+        let exp = expectation(description: "waiting")
+        let expectedAccount = makeAccountModel()
+
+        // Act
+        sut.add(account: addAccountModel) { result in
+            switch result {
+            case .success(let receivedAccount):
+                // Assert
+                XCTAssertEqual(receivedAccount, expectedAccount)
+
+            default:
+                XCTFail("Expected success, but got \(result) instead")
+            }
+
+            exp.fulfill()
+        }
+
+        httpClientSpy.completeWith(data: expectedAccount.toData()!)
+        wait(for: [exp], timeout: 1)
+    }
 }
 
 // MARK: - RemoteAddAccountTests helpers
@@ -74,6 +99,15 @@ extension RemoteAddAccountTests {
         )
     }
 
+    func makeAccountModel() -> AccountModel {
+        AccountModel(
+            id: "any_id",
+            name: "Any Name",
+            email: "any.name@example.com",
+            password: "pass"
+        )
+    }
+
     class HttpClientSpy: HttpPostClient {
         var urls = [URL]()
         var data: Data?
@@ -91,6 +125,10 @@ extension RemoteAddAccountTests {
 
         func completeWith(error: HttpError) {
             completion?(.failure(error))
+        }
+
+        func completeWith(data: Data) {
+            completion?(.success(data))
         }
     }
 }
