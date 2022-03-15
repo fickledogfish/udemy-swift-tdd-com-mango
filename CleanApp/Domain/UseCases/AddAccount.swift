@@ -3,7 +3,7 @@ import Foundation
 public protocol AddAccount {
     func add(
         account: AddAccountModel,
-        completion: @escaping (Result<AccountModel, Error>) -> Void
+        completion: @escaping (Result<AccountModel, DomainError>) -> Void
     )
 }
 
