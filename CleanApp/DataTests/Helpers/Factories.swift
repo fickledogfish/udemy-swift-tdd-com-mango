@@ -11,3 +11,7 @@ func makeValidData() -> Data {
 func makeUrl() -> URL {
     URL(string: "https://curl.se/")!
 }
+
+func makeError() -> Error {
+    NSError(domain: "any_error", code: 0)
+}
