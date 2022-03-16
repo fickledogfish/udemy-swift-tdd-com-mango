@@ -8,9 +8,19 @@ class AlamofireAdapter {
         self.session = session
     }
 
-    func post(to url: URL) {
+    func post(to url: URL, with data: Data?) {
+        let json = try? JSONSerialization.jsonObject(
+            with: data!,
+            options: .allowFragments
+        ) as? [String: Any]
+
         session
-            .request(url, method: .post)
+            .request(
+                url,
+                method: .post,
+                parameters: json,
+                encoding: JSONEncoding.default
+            )
             .resume()
     }
 }
@@ -28,12 +38,14 @@ class AlamofireAdapterTests: XCTestCase {
         let sut = AlamofireAdapter(session: session)
 
         // Act
-        sut.post(to: url)
+        sut.post(to: url, with: makeValidData())
 
         // Assert
         UrlProtocolStub.observeRequest { request in
             XCTAssertEqual(url, request.url)
             XCTAssertEqual("POST", request.httpMethod)
+            XCTAssertNotNil(request.httpBodyStream)
+
             exp.fulfill()
         }
 
