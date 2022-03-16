@@ -96,16 +96,17 @@ extension AlamofireAdapterTests {
         action: @escaping (URLRequest) -> Void
     ) {
         let sut = makeSut()
+        var request: URLRequest?
         let exp = expectation(description: "waiting")
 
-        sut.post(to: url, with: data) { _ in }
-
-        UrlProtocolStub.observeRequest { request in
-            action(request)
+        sut.post(to: url, with: data) { _ in
             exp.fulfill()
         }
 
+        UrlProtocolStub.observeRequest { request = $0 }
+
         wait(for: [exp], timeout: 1)
+        action(request!)
     }
 }
 
