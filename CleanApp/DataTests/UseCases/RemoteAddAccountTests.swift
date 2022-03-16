@@ -64,6 +64,25 @@ class RemoteAddAccountTests: XCTestCase {
             }
         )
     }
+
+    func test_add_should_not_complete_if_sut_has_been_deallocated() {
+        // Arrange
+        let httpclientSpy = HttpClientSpy()
+        var sut = Optional(RemoteAddAccount(
+            url: makeUrl(),
+            httpClient: httpclientSpy
+        ))
+        var result: Result<AccountModel, DomainError>?
+
+        // Act
+        sut?.add(account: makeAddAccountModel()) { result = $0 }
+
+        sut = nil
+        httpclientSpy.completeWith(error: .noConnectivity)
+
+        // Assert
+        XCTAssertNil(result)
+    }
 }
 
 // MARK: - RemoteAddAccountTests helpers
