@@ -16,12 +16,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: |
-          xcodebuild -"$PROJECT_TYPE" "$PROJECT_FILE"
+        run: xcodebuild -"$PROJECT_TYPE" "$PROJECT_FILE"
 
       - name: Lint
-        run: |
-          swiftlint
+        run: swiftlint
 
-      - name: Run tests
-        run: sh .github/workflows/scripts/run_tests.sh
+      - name: Run CI tests
+        run: xcodebuild test -"$PROJECT_TYPE" "$PROJECT_FILE" -scheme "CI"
