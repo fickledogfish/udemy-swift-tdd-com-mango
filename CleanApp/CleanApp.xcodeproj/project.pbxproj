@@ -11,6 +11,7 @@
 		0E19B86C27E11B88002997CF /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E19B86B27E11B88002997CF /* HttpError.swift */; };
 		0E19B86F27E129EC002997CF /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E19B86E27E129EC002997CF /* ExtensionHelpers.swift */; };
 		0E29DAFA27E355B9006123E3 /* AlamofireAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E29DAF927E355B9006123E3 /* AlamofireAdapter.swift */; };
+		0E29DAFE27E3574A006123E3 /* UrlProtocolStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E29DAFD27E3574A006123E3 /* UrlProtocolStub.swift */; };
 		0E6FB92C27E215FB00336EBD /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB92B27E215FB00336EBD /* XCTestCaseExtensions.swift */; };
 		0E6FB92E27E2165A00336EBD /* Factories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB92D27E2165A00336EBD /* Factories.swift */; };
 		0E6FB93127E216B900336EBD /* HttpClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB93027E216B900336EBD /* HttpClientSpy.swift */; };
@@ -94,6 +95,7 @@
 		0E19B86B27E11B88002997CF /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
 		0E19B86E27E129EC002997CF /* ExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHelpers.swift; sourceTree = "<group>"; };
 		0E29DAF927E355B9006123E3 /* AlamofireAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireAdapter.swift; sourceTree = "<group>"; };
+		0E29DAFD27E3574A006123E3 /* UrlProtocolStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlProtocolStub.swift; sourceTree = "<group>"; };
 		0E6FB92B27E215FB00336EBD /* XCTestCaseExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestCaseExtensions.swift; sourceTree = "<group>"; };
 		0E6FB92D27E2165A00336EBD /* Factories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Factories.swift; sourceTree = "<group>"; };
 		0E6FB93027E216B900336EBD /* HttpClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientSpy.swift; sourceTree = "<group>"; };
@@ -180,6 +182,15 @@
 			path = Http;
 			sourceTree = "<group>";
 		};
+		0E29DAFC27E35735006123E3 /* Http */ = {
+			isa = PBXGroup;
+			children = (
+				0EDBC37127E2493800B77272 /* AlamofireAdapterTests.swift */,
+				0E29DAFD27E3574A006123E3 /* UrlProtocolStub.swift */,
+			);
+			path = Http;
+			sourceTree = "<group>";
+		};
 		0E6FB92A27E215D600336EBD /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -209,7 +220,7 @@
 		0EDBC37027E2493800B77272 /* InfraTests */ = {
 			isa = PBXGroup;
 			children = (
-				0EDBC37127E2493800B77272 /* AlamofireAdapterTests.swift */,
+				0E29DAFC27E35735006123E3 /* Http */,
 			);
 			path = InfraTests;
 			sourceTree = "<group>";
@@ -551,6 +562,7 @@
 				0E93748D27E24C5F0031B4DF /* Factories.swift in Sources */,
 				0E93748C27E24C5C0031B4DF /* XCTestCaseExtensions.swift in Sources */,
 				0EDBC37227E2493800B77272 /* AlamofireAdapterTests.swift in Sources */,
+				0E29DAFE27E3574A006123E3 /* UrlProtocolStub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
