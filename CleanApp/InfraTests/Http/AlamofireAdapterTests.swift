@@ -145,6 +145,24 @@ class AlamofireAdapterTests: XCTestCase {
                 error: nil
             )
         )
+
+        expect(
+            .failure(.noConnectivity),
+            when: (
+                data: makeValidData(),
+                response: makeHttpResponse(statusCode: 100),
+                error: nil
+            )
+        )
+
+        expect(
+            .failure(.noConnectivity),
+            when: (
+                data: makeValidData(),
+                response: makeHttpResponse(statusCode: 300),
+                error: nil
+            )
+        )
     }
 }
 
