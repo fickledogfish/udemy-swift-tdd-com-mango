@@ -10,6 +10,7 @@
 		0E19B86A27E109D7002997CF /* DomainError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E19B86927E109D7002997CF /* DomainError.swift */; };
 		0E19B86C27E11B88002997CF /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E19B86B27E11B88002997CF /* HttpError.swift */; };
 		0E19B86F27E129EC002997CF /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E19B86E27E129EC002997CF /* ExtensionHelpers.swift */; };
+		0E29DAFA27E355B9006123E3 /* AlamofireAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E29DAF927E355B9006123E3 /* AlamofireAdapter.swift */; };
 		0E6FB92C27E215FB00336EBD /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB92B27E215FB00336EBD /* XCTestCaseExtensions.swift */; };
 		0E6FB92E27E2165A00336EBD /* Factories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB92D27E2165A00336EBD /* Factories.swift */; };
 		0E6FB93127E216B900336EBD /* HttpClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB93027E216B900336EBD /* HttpClientSpy.swift */; };
@@ -92,6 +93,7 @@
 		0E19B86927E109D7002997CF /* DomainError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainError.swift; sourceTree = "<group>"; };
 		0E19B86B27E11B88002997CF /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
 		0E19B86E27E129EC002997CF /* ExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHelpers.swift; sourceTree = "<group>"; };
+		0E29DAF927E355B9006123E3 /* AlamofireAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireAdapter.swift; sourceTree = "<group>"; };
 		0E6FB92B27E215FB00336EBD /* XCTestCaseExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestCaseExtensions.swift; sourceTree = "<group>"; };
 		0E6FB92D27E2165A00336EBD /* Factories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Factories.swift; sourceTree = "<group>"; };
 		0E6FB93027E216B900336EBD /* HttpClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientSpy.swift; sourceTree = "<group>"; };
@@ -170,6 +172,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		0E29DAFB27E35644006123E3 /* Http */ = {
+			isa = PBXGroup;
+			children = (
+				0E29DAF927E355B9006123E3 /* AlamofireAdapter.swift */,
+			);
+			path = Http;
+			sourceTree = "<group>";
+		};
 		0E6FB92A27E215D600336EBD /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +201,7 @@
 		0EDBC36627E2493800B77272 /* Infra */ = {
 			isa = PBXGroup;
 			children = (
+				0E29DAFB27E35644006123E3 /* Http */,
 			);
 			path = Infra;
 			sourceTree = "<group>";
@@ -443,6 +454,7 @@
 				TargetAttributes = {
 					0EDBC36427E2493800B77272 = {
 						CreatedOnToolsVersion = 13.1;
+						LastSwiftMigration = 1310;
 					};
 					0EDBC36B27E2493800B77272 = {
 						CreatedOnToolsVersion = 13.1;
@@ -528,6 +540,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E29DAFA27E355B9006123E3 /* AlamofireAdapter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,6 +617,7 @@
 		0EDBC37427E2493800B77272 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -626,6 +640,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -633,6 +648,7 @@
 		0EDBC37527E2493800B77272 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -662,6 +678,7 @@
 		0EDBC37627E2493800B77272 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -684,6 +701,7 @@
 		0EDBC37727E2493800B77272 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;

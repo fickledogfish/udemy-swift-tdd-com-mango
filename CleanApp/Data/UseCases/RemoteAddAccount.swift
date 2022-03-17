@@ -1,4 +1,5 @@
 import Foundation
+
 import Domain
 
 public final class RemoteAddAccount: AddAccount {

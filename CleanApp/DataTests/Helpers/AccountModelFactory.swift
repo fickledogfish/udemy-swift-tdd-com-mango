@@ -1,4 +1,5 @@
 import Foundation
+
 import Domain
 
 func makeAccountModel() -> AccountModel {
