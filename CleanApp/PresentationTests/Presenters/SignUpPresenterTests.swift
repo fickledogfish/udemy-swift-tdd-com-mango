@@ -70,6 +70,24 @@ class SignUpPresenterTests: XCTestCase {
             message: "O campo confirmação de senha é obrigatório"
         ))
     }
+
+    func test_signUp_should_show_error_message_if_passwordConfirmation_does_not_match() {
+        let (sut, alertViewSpy) = makeSut()
+        let signUpViewModel = SignUpViewModel(
+            name: "any_name" ,
+            email: "any_email@example.com",
+            password: "any_password",
+            passwordConfirmation: "wrong_password"
+        )
+
+        sut.signUp(viewModel: signUpViewModel)
+
+        XCTAssertEqual(alertViewSpy.viewModel, AlertViewModel(
+            title: "Falha na validação",
+            message: "Falha ao confirmar senha"
+        ))
+    }
+
 }
 
 // MARK: - SignUpPresenterTests helpers
