@@ -23,3 +23,7 @@ jobs:
 
       - name: Run CI tests
         run: xcodebuild test -"$PROJECT_TYPE" "$PROJECT_FILE" -scheme "CI"
+
+      - name: Run integration tests
+        continue-on-error: true
+        run: xcodebuild test -"$PROJECT_TYPE" "$PROJECT_FILE" -scheme "UseCasesIntegrationTests"

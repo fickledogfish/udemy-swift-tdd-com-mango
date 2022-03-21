@@ -6,12 +6,14 @@ import Domain
 
 class AddAccountIntegrationTests: XCTestCase {
     func test_add_account() {
+        let uuid = UUID()
+
         let alamofireAdapter = AlamofireAdapter()
         let url = URL(string: "https://fordevs.herokuapp.com/api/signup")!
         let sut = RemoteAddAccount(url: url, httpClient: alamofireAdapter)
         let addAccountModel = AddAccountModel(
-            name: "Loni Brounson",
-            email: "lonibrounson@example.com",
+            name: "\(uuid)",
+            email: "\(uuid)@example.com",
             password: "supersecretpassword",
             passwordConfirmation: "supersecretpassword"
         )
