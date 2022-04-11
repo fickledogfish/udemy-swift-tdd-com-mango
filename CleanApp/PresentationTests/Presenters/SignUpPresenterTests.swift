@@ -78,7 +78,7 @@ class SignUpPresenterTests: XCTestCase {
         let emailValidatorSpy = EmailValidatorSpy()
         let sut = makeSut(alertView: alertViewSpy, emailValidator: emailValidatorSpy)
 
-        emailValidatorSpy.isValid = false
+        emailValidatorSpy.simulateInvalidEmail()
 
         sut.signUp(viewModel: makeSignUpViewModel())
 
@@ -132,6 +132,10 @@ extension SignUpPresenterTests {
             self.email = email
 
             return isValid
+        }
+
+        func simulateInvalidEmail() {
+            isValid = false
         }
     }
 }
