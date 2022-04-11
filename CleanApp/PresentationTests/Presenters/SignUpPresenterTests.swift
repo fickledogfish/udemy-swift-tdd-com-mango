@@ -1,5 +1,6 @@
 import XCTest
 
+import Domain
 import Presentation
 
 class SignUpPresenterTests: XCTestCase {
@@ -87,6 +88,15 @@ class SignUpPresenterTests: XCTestCase {
 
         XCTAssertEqual(emailValidatorSpy.email, signUpViewModel.email)
     }
+
+    func test_signUp_should_call_addAccount_with_correct_values() {
+        let addAccountSpy = AddAccountSpy()
+        let sut = makeSut(addAccount: addAccountSpy)
+
+        sut.signUp(viewModel: makeSignUpViewModel())
+
+        XCTAssertEqual(addAccountSpy.addAccountModel, makeAddAccountModel())
+    }
 }
 
 // MARK: - SignUpPresenterTests helpers
@@ -94,11 +104,13 @@ class SignUpPresenterTests: XCTestCase {
 extension SignUpPresenterTests {
     func makeSut(
         alertView: AlertViewSpy = AlertViewSpy(),
-        emailValidator: EmailValidatorSpy = EmailValidatorSpy()
+        emailValidator: EmailValidatorSpy = EmailValidatorSpy(),
+        addAccount: AddAccountSpy = AddAccountSpy()
     ) -> SignUpPresenter {
         SignUpPresenter(
             alertView: alertView,
-            emailValidator: emailValidator
+            emailValidator: emailValidator,
+            addAccount: addAccount
         )
     }
 
@@ -149,7 +161,18 @@ extension SignUpPresenterTests {
         }
 
         func simulateInvalidEmail() {
-            isValid = false
+            self.isValid = false
+        }
+    }
+
+    class AddAccountSpy: AddAccount {
+        var addAccountModel: AddAccountModel?
+
+        func add(
+            account: AddAccountModel,
+            completion: @escaping (Result<AccountModel, DomainError>) -> Void
+        ) {
+            self.addAccountModel = account
         }
     }
 }
