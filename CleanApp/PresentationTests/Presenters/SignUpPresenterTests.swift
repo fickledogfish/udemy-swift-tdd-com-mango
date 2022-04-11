@@ -97,6 +97,19 @@ class SignUpPresenterTests: XCTestCase {
 
         XCTAssertEqual(addAccountSpy.addAccountModel, makeAddAccountModel())
     }
+
+    func test_signUp_should_show_error_message_if_addAccount_fails() {
+        let alertViewSpy = AlertViewSpy()
+        let addAccountSpy = AddAccountSpy()
+        let sut = makeSut(alertView: alertViewSpy, addAccount: addAccountSpy)
+
+        sut.signUp(viewModel: makeSignUpViewModel())
+        addAccountSpy.completeWith(error: .unexpected)
+
+        XCTAssertEqual(alertViewSpy.viewModel, makeErrorAlertViewModel(
+            message: "Algo inesperado aconteceu, tente novamente em alguns instantes."
+        ))
+    }
 }
 
 // MARK: - SignUpPresenterTests helpers
@@ -142,6 +155,10 @@ extension SignUpPresenterTests {
         )
     }
 
+    func makeErrorAlertViewModel(message: String) -> AlertViewModel {
+        AlertViewModel(title: "Erro", message: message)
+    }
+
     class AlertViewSpy: AlertView {
         var viewModel: AlertViewModel?
 
@@ -167,12 +184,18 @@ extension SignUpPresenterTests {
 
     class AddAccountSpy: AddAccount {
         var addAccountModel: AddAccountModel?
+        var completion: ((Result<AccountModel, DomainError>) -> Void)? = nil
 
         func add(
             account: AddAccountModel,
             completion: @escaping (Result<AccountModel, DomainError>) -> Void
         ) {
             self.addAccountModel = account
+            self.completion = completion
+        }
+
+        func completeWith(error: DomainError) {
+            completion?(.failure(error))
         }
     }
 }
