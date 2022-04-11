@@ -31,6 +31,7 @@
 		0EDBC36D27E2493800B77272 /* Infra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EDBC36527E2493800B77272 /* Infra.framework */; };
 		0EDBC37227E2493800B77272 /* AlamofireAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDBC37127E2493800B77272 /* AlamofireAdapterTests.swift */; };
 		0EFA04622804627100CF0DCD /* AccountModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB93227E2171000336EBD /* AccountModelFactory.swift */; };
+		0EFA046328049F2400CF0DCD /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB92B27E215FB00336EBD /* XCTestCaseExtensions.swift */; };
 		0EFC8F4C27C52F8A005C7019 /* AddAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EFC8F4B27C52F8A005C7019 /* AddAccount.swift */; };
 		0EFC8F4E27C530B3005C7019 /* AccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EFC8F4D27C530B3005C7019 /* AccountModel.swift */; };
 		0EFC8F5C27C53224005C7019 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EFC8F5427C53224005C7019 /* Data.framework */; };
@@ -797,6 +798,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0EFA046328049F2400CF0DCD /* XCTestCaseExtensions.swift in Sources */,
 				0EFA04622804627100CF0DCD /* AccountModelFactory.swift in Sources */,
 				0E0B6F7C27E4BAFB0087CBB9 /* SignUpPresenterTests.swift in Sources */,
 			);
