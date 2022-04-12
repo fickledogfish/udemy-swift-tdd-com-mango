@@ -47,7 +47,10 @@ public final class SignUpPresenter {
                     ))
 
                 case .success:
-                    break
+                    this.alertView.showMessage(viewModel: AlertViewModel(
+                        title: "Sucesso",
+                        message: "Conta criada com sucesso."
+                    ))
                 }
 
                 this.loadingView.display(viewModel: LoadingViewModel(isLoading: false))
