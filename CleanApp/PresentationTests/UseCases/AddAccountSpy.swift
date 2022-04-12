@@ -2,7 +2,7 @@ import Domain
 
 class AddAccountSpy: AddAccount {
     var addAccountModel: AddAccountModel?
-    var completion: ((Result<AccountModel, DomainError>) -> Void)? = nil
+    var completion: ((Result<AccountModel, DomainError>) -> Void)?
 
     func add(
         account: AddAccountModel,

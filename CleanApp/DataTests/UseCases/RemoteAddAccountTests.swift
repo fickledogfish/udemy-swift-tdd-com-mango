@@ -109,7 +109,7 @@ extension RemoteAddAccountTests {
         when action: () -> Void,
         file: StaticString = #file,
         line: UInt = #line
-    ){
+    ) {
         let exp = expectation(description: "waiting")
 
         sut.add(account: makeAddAccountModel()) { receivedResult in

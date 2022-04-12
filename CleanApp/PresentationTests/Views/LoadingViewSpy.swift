@@ -1,7 +1,7 @@
 import Presentation
 
 class LoadingViewSpy: LoadingView {
-    var emit: ((LoadingViewModel) -> Void)? = nil
+    var emit: ((LoadingViewModel) -> Void)?
 
     func observe(completion: @escaping (LoadingViewModel) -> Void) {
         self.emit = completion
