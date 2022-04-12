@@ -27,12 +27,7 @@ public final class SignUpPresenter {
                 message: message
             ))
         } else {
-            let addAccountModel = AddAccountModel(
-                name: viewModel.name!,
-                email: viewModel.email!,
-                password: viewModel.password!,
-                passwordConfirmation: viewModel.passwordConfirmation!
-            )
+            let addAccountModel = SignUpMapper.toAddAccountModel(viewModel: viewModel)
 
             loadingView.display(viewModel: LoadingViewModel(isLoading: true))
 
