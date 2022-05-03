@@ -2,20 +2,24 @@ name: Build and test the app
 
 on: [ push, pull_request ]
 
+env:
+  PROJECT_TYPE: project
+  PROJECT_FILE: CleanApp/CleanApp.xcodeproj
+
+  PLATFORM: ${{ 'iOS Simulator' }}
+  DEVICE: ${{ 'iPhone 13' }}
+
+  CI_SCHEME: "CI"
+  INTEGRATION_SCHEME: "UseCasesIntegrationTests"
+
+  BUILD_DIR: "build"
+  OBJROOT_DIR: "build/obj.root"
+  SYMROOT_DIR: "build/sym.root"
+
 jobs:
   build:
-    name: Build and test
+    name: Build the app for testing
     runs-on: macos-latest
-
-    env:
-      PROJECT_TYPE: project
-      PROJECT_FILE: CleanApp/CleanApp.xcodeproj
-
-      PLATFORM: ${{ 'iOS Simulator' }}
-      DEVICE: ${{ 'iPhone 13' }}
-
-      CI_SCHEME: "CI"
-      INTEGRATION_SCHEME: "UseCasesIntegrationTests"
 
     steps:
       - name: Checkout
@@ -24,21 +28,70 @@ jobs:
       - name: Build
         run: >
           xcodebuild
+          OBJROOT="$(pwd)/$OBJROOT_DIR"
+          SYMROOT="$(pwd)/$SYMROOT_DIR"
           -"$PROJECT_TYPE" "$PROJECT_FILE"
           -scheme "$CI_SCHEME"
           -destination "platform=$PLATFORM,name=$DEVICE"
           build-for-testing
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-build
+          retention-days: 3
+          path: "${{ env.BUILD_DIR }}"
+
+  lint:
+    needs: build
+    name: Run linter
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: test-build
+          path: "${{ env.BUILD_DIR }}"
+
       - name: Lint
         run: swiftlint
+
+  unit-tests:
+    needs: build
+    name: Run unit tests
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: test-build
+          path: "${{ env.BUILD_DIR }}"
 
       - name: Run CI tests
         run: >
           xcodebuild
+          OBJROOT="$(pwd)/$OBJROOT_DIR"
+          SYMROOT="$(pwd)/$SYMROOT_DIR"
           -"$PROJECT_TYPE" "$PROJECT_FILE" 
           -scheme "$CI_SCHEME"
           -destination "platform=$PLATFORM,name=$DEVICE"
           test-without-building
+
+  integration-tests:
+    name: Build and run integration tests
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Build integration tests
         run: >
