@@ -24,6 +24,8 @@ final class SignUpViewController: UIViewController {
             action: #selector(saveButtonTapped),
             for: .touchUpInside
         )
+
+        hideKeyboardOnTap()
     }
 
     @objc private func saveButtonTapped() {
