@@ -31,6 +31,7 @@
 		0E782FE127E8E5470068268F /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E782FDE27E8E41C0068268F /* AlertView.swift */; };
 		0E782FE527E8E7ED0068268F /* EmailValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E782FE427E8E7ED0068268F /* EmailValidator.swift */; };
 		0E89FD132824626400B947A4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E89FD122824626400B947A4 /* Environment.swift */; };
+		0E89FD16282469A500B947A4 /* TestFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2393FD2805B47700C2C785 /* TestFactories.swift */; };
 		0E93748727E24C340031B4DF /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EFC8F5427C53224005C7019 /* Data.framework */; };
 		0E93748827E24C340031B4DF /* Data.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0EFC8F5427C53224005C7019 /* Data.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0E93748C27E24C5C0031B4DF /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6FB92B27E215FB00336EBD /* XCTestCaseExtensions.swift */; };
@@ -1683,6 +1684,7 @@
 			files = (
 				0EF874AB282402A7004F91E3 /* XCTestCaseExtensions.swift in Sources */,
 				0EF874AA28240245004F91E3 /* AddAccountSpy.swift in Sources */,
+				0E89FD16282469A500B947A4 /* TestFactories.swift in Sources */,
 				0EF874A9282401C5004F91E3 /* SignUpComposerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

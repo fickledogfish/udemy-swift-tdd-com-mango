@@ -34,6 +34,8 @@ public final class SignUpPresenter {
             addAccount.add(account: addAccountModel) { [weak self] result in
                 guard let this = self else { return }
 
+                this.loadingView.display(viewModel: LoadingViewModel(isLoading: false))
+
                 switch result {
                 case .failure:
                     this.alertView.showMessage(viewModel: AlertViewModel(
@@ -47,8 +49,6 @@ public final class SignUpPresenter {
                         message: "Conta criada com sucesso."
                     ))
                 }
-
-                this.loadingView.display(viewModel: LoadingViewModel(isLoading: false))
             }
         }
     }
