@@ -1,7 +1,7 @@
 import XCTest
 
 import Main
-@testable import PresentationTests
+import PresentationTests
 
 class SignUpIntegrationTests: XCTestCase {
     func test_ui_presentation_integration() {
