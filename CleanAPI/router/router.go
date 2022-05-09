@@ -11,10 +11,17 @@ import (
 const HttpAddr = ":5050"
 
 func NewRouter() http.Handler {
-	mux := http.NewServeMux()
-	mux.Handle("/api", http.HandlerFunc(signinHandler))
+	// Subrouters
 
-	return mux
+	apiMux := http.NewServeMux()
+	apiMux.Handle("/signup", http.HandlerFunc(signinHandler))
+
+	// Root router
+
+	rootMux := http.NewServeMux()
+	rootMux.Handle("/api/", http.StripPrefix("/api", apiMux))
+
+	return rootMux
 }
 
 func signinHandler(w http.ResponseWriter, r *http.Request) {
