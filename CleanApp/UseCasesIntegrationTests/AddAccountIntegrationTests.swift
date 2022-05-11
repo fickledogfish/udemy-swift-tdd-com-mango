@@ -5,11 +5,14 @@ import Infra
 import Domain
 
 class AddAccountIntegrationTests: XCTestCase {
+    // https://fordevs.herokuapp.com/api
+    private static let apiBaseUrl = "http://localhost:5050/api"
+
     func test_add_account() {
         let uuid = UUID()
 
         let alamofireAdapter = AlamofireAdapter()
-        let url = URL(string: "https://fordevs.herokuapp.com/api/signup")!
+        let url = URL(string: "\(Self.apiBaseUrl)/signup")!
         let sut = RemoteAddAccount(url: url, httpClient: alamofireAdapter)
         let addAccountModel = AddAccountModel(
             name: "\(uuid)",

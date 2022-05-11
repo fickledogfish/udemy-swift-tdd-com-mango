@@ -117,7 +117,7 @@ jobs:
           path: "CleanAPI/${{ env.API_EXE }}"
 
   integration-tests:
-    needs: [ build-app, build-api ]
+    needs: build-api
     name: Build and run integration tests
     runs-on: macos-latest
 
@@ -131,19 +131,20 @@ jobs:
           name: api-exe
           path: "${{ env.API_EXE }}"
 
-      - name: Download app build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: test-build
-          path: "${{ env.BUILD_DIR }}"
-
-      - name: ls
-        run: ls -R
+      - name: Build the app for testing
+        run: >
+          xcodebuild
+          OBJROOT="$(pwd)/$OBJROOT_DIR"
+          SYMROOT="$(pwd)/$SYMROOT_DIR"
+          -"$PROJECT_TYPE" "$PROJECT_FILE"
+          -scheme "$INTEGRATION_SCHEME"
+          -destination "platform=$PLATFORM,name=$DEVICE"
+          build-for-testing
 
       - name: Run integration tests
         continue-on-error: true
         run: >
-          ./api &
+          ./${{ env.API_EXE }} &
           xcodebuild
           OBJROOT="$(pwd)/$OBJROOT_DIR"
           SYMROOT="$(pwd)/$SYMROOT_DIR"
