@@ -16,8 +16,10 @@ env:
   OBJROOT_DIR: "build/obj.root"
   SYMROOT_DIR: "build/sym.root"
 
+  API_EXE: "api.exe"
+
 jobs:
-  build:
+  build-app:
     name: Build the app for testing
     runs-on: macos-latest
 
@@ -43,7 +45,7 @@ jobs:
           path: "${{ env.BUILD_DIR }}"
 
   lint:
-    needs: build
+    needs: build-app
     name: Run linter
     runs-on: macos-latest
 
@@ -61,7 +63,7 @@ jobs:
         run: swiftlint
 
   unit-tests:
-    needs: build
+    needs: build-app
     name: Run unit tests
     runs-on: macos-latest
 
@@ -85,7 +87,37 @@ jobs:
           -destination "platform=$PLATFORM,name=$DEVICE"
           test-without-building
 
+  build-api:
+    name: Build the API
+    runs-on: macos-latest
+
+    steps:
+      - name: Setup Go environment
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.*
+          check-latest: true
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Debug info
+        run: go version
+
+      - name: Build the API
+        run: |
+          cd CleanAPI
+          go build -o "${{ env.API_EXE }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-exe
+          retention-days: 3
+          path: "CleanAPI/${{ env.API_EXE }}"
+
   integration-tests:
+    needs: [ build-app, build-api ]
     name: Build and run integration tests
     runs-on: macos-latest
 
@@ -93,18 +125,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build integration tests
-        run: >
-          xcodebuild
-          -"$PROJECT_TYPE" "$PROJECT_FILE"
-          -scheme "$INTEGRATION_SCHEME"
-          -destination "platform=$PLATFORM,name=$DEVICE"
-          build-for-testing
+      - name: Download api build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: api-exe
+          path: "${{ env.API_EXE }}"
+
+      - name: Download app build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: test-build
+          path: "${{ env.BUILD_DIR }}"
+
+      - name: ls
+        run: ls -R
 
       - name: Run integration tests
         continue-on-error: true
         run: >
+          ./api &
           xcodebuild
+          OBJROOT="$(pwd)/$OBJROOT_DIR"
+          SYMROOT="$(pwd)/$SYMROOT_DIR"
           -"$PROJECT_TYPE" "$PROJECT_FILE"
           -scheme "$INTEGRATION_SCHEME"
           -destination "platform=$PLATFORM,name=$DEVICE"
