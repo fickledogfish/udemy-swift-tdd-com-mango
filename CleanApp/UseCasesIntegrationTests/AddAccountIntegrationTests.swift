@@ -5,14 +5,14 @@ import Infra
 import Domain
 
 class AddAccountIntegrationTests: XCTestCase {
-    // https://fordevs.herokuapp.com/api
-    private static let apiBaseUrl = "http://localhost:5050/api"
+    // private static var apiBaseUrl: String = "http://localhost:5050"
+    private static var apiBaseUrl: String = "https://fordevs.herokuapp.com"
 
     func test_add_account() {
         let uuid = UUID()
 
         let alamofireAdapter = AlamofireAdapter()
-        let url = URL(string: "\(Self.apiBaseUrl)/signup")!
+        let url = URL(string: "\(Self.apiBaseUrl)/api/signup")!
         let sut = RemoteAddAccount(url: url, httpClient: alamofireAdapter)
         let addAccountModel = AddAccountModel(
             name: "\(uuid)",
@@ -29,9 +29,7 @@ class AddAccountIntegrationTests: XCTestCase {
                 XCTFail("Expected success, but got \(result)")
 
             case .success(let account):
-                XCTAssertNotNil(account.id)
-                XCTAssertEqual(account.name, addAccountModel.name)
-                XCTAssertEqual(account.email, addAccountModel.email)
+                XCTAssertNotNil(account.accessToken)
             }
 
             exp.fulfill()
