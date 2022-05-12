@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"example.com/api/router"
 )
 
 func main() {
-	http.ListenAndServe(router.HttpAddr, router.NewRouter())
+	err := http.ListenAndServe(router.HttpAddr, router.NewRouter())
+	if err != nil {
+		fmt.Println(err)
+	}
 }

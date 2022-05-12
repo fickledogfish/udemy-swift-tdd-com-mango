@@ -1,27 +1,25 @@
 package models
 
 import (
-	"strings"
+	"encoding/json"
 
 	"github.com/google/uuid"
 )
 
 type signUpModelResponse struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name        string `json:"name"`
+	AccessToken string `json:"accessToken"`
 }
 
 func NewSignUpModelResponse(req SignUpModel) signUpModelResponse {
 	return signUpModelResponse{
-		Id:       uuid.New().String(),
-		Name:     req.Name,
-		Email:    req.Email,
-		Password: strings.Repeat("*", len(req.Password)),
+		Name:        req.Name,
+		AccessToken: uuid.New().String(),
 	}
 }
 
-func (r signUpModelResponse) String() string {
-	return stringify(r)
+// Implementing encoding.BinaryMarshaler --------------------------------------
+
+func (s signUpModelResponse) MarshalBinary() ([]byte, error) {
+	return json.Marshal(s)
 }

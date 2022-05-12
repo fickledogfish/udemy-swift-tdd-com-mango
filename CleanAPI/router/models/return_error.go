@@ -1,10 +1,19 @@
 package models
 
-type ReturnError struct {
-	Message string `json:"message"`
-	Code    int    `json:"code"`
+import "encoding/json"
+
+type returnError struct {
+	Error string `json:"error"`
 }
 
-func (r ReturnError) String() string {
-	return stringify(r)
+func NewReturnError(message string) returnError {
+	return returnError{
+		Error: message,
+	}
+}
+
+// Implementing encoding.BinaryMarshaler --------------------------------------
+
+func (e returnError) MarshalBinary() ([]byte, error) {
+	return json.Marshal(e)
 }
