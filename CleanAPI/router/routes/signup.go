@@ -4,26 +4,29 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"example.com/api/log"
 	"example.com/api/router/models"
-	res "example.com/api/router/responses"
+	r "example.com/api/router/responses"
 )
 
-func Signup(w http.ResponseWriter, r *http.Request) {
+func Signup(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if r.Method != http.MethodPost {
-		res.Forbidden(w, "Forbidden")
+	if req.Method != http.MethodPost {
+		r.Forbidden(w, "Forbidden")
+		log.Info("%v", req.Method)
 		return
 	}
 
-	bodyData, err := ioutil.ReadAll(r.Body)
+	bodyData, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		res.BadRequest(w, "Failed to read request")
+		r.BadRequest(w, "Failed to read request")
+		log.Info(err.Error())
 		return
 	}
 
 	var reqAccountData models.SignUpModel
 	if err = reqAccountData.UnmarshalBinary(bodyData); err != nil {
-		res.InternalServerError(w, "Failed to parse request")
+		r.InternalServerError(w, "Failed to parse request")
 		return
 	}
 
@@ -31,16 +34,17 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		reqAccountData.Email == "" ||
 		reqAccountData.Password == "" ||
 		reqAccountData.PasswordConfirmation == "" {
-		res.BadRequest(w, "Missing fields")
+		r.BadRequest(w, "Missing fields")
 		return
 	}
 
 	if reqAccountData.Password != reqAccountData.PasswordConfirmation {
-		res.BadRequest(w, "Password confirmation does not match")
+		r.BadRequest(w, "Password confirmation does not match")
 		return
 	}
 
 	respModel := models.NewSignUpModelResponse(reqAccountData)
 
-	res.Ok(w, respModel)
+	log.Debug("created: %+v", respModel)
+	r.Ok(w, respModel)
 }
