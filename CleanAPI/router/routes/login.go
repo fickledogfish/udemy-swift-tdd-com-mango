@@ -2,5 +2,14 @@ package routes
 
 import "net/http"
 
-func Login(w http.ResponseWriter, req *http.Request) {
+type logInHandler struct {
+}
+
+func NewLogInHandler() logInHandler {
+	return logInHandler{}
+}
+
+// Implementing http.Handler --------------------------------------------------
+
+func (h logInHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }

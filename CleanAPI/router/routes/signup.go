@@ -9,7 +9,16 @@ import (
 	r "example.com/api/router/responses"
 )
 
-func Signup(w http.ResponseWriter, req *http.Request) {
+type signUpHandler struct {
+}
+
+func NewSignUpHandler() signUpHandler {
+	return signUpHandler{}
+}
+
+// Implementing http.Handler --------------------------------------------------
+
+func (h signUpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if req.Method != http.MethodPost {
 		r.Forbidden(w, "Forbidden")

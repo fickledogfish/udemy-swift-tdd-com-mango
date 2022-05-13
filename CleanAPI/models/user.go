@@ -5,20 +5,20 @@ import (
 	"github.com/google/uuid"
 )
 
-type user struct {
+type User struct {
 	AccessToken  string
 	Name         string
 	Email        string
 	PasswordHash []byte
 }
 
-func NewUser(requestModel SignUpModel) (newUser user, err error) {
+func NewUser(requestModel SignUpModel) (newUser User, err error) {
 	passHash, err := crypt.HashPassword(requestModel.Password)
 	if err != nil {
 		return
 	}
 
-	return user{
+	return User{
 		AccessToken:  uuid.NewString(),
 		Name:         requestModel.Name,
 		Email:        requestModel.Email,

@@ -30,7 +30,7 @@ func (l logLevel) String() string {
 		return "ERR"
 
 	default:
-		panic(fmt.Sprintf("Unknown log level: %v", l))
+		panic(fmt.Sprintf("Unknown log level: %d", l))
 	}
 }
 

@@ -12,8 +12,8 @@ func NewRouter() http.Handler {
 	// Subrouters
 
 	apiMux := http.NewServeMux()
-	apiMux.Handle("/signup", http.HandlerFunc(routes.Signup))
-	apiMux.Handle("/login", http.HandlerFunc(routes.Login))
+	apiMux.Handle("/signup", routes.NewSignUpHandler())
+	apiMux.Handle("/login", routes.NewLogInHandler())
 
 	// Root router
 

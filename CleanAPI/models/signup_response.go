@@ -9,7 +9,7 @@ type signUpModelResponse struct {
 	AccessToken string `json:"accessToken"`
 }
 
-func NewSignUpModelResponse(u user) signUpModelResponse {
+func NewSignUpModelResponse(u User) signUpModelResponse {
 	return signUpModelResponse{
 		Name:        u.Name,
 		AccessToken: u.AccessToken,
