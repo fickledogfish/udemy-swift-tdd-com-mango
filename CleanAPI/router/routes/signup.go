@@ -7,9 +7,11 @@ import (
 	"example.com/api/log"
 	"example.com/api/models"
 	r "example.com/api/router/responses"
+	v "example.com/api/validations"
 )
 
 type signUpHandler struct {
+	validator v.Validation
 }
 
 func NewSignUpHandler() signUpHandler {
