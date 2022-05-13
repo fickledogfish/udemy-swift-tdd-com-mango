@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"example.com/api/log"
-	"example.com/api/router/models"
+	"example.com/api/models"
 	r "example.com/api/router/responses"
 )
 
@@ -26,7 +26,7 @@ func Signup(w http.ResponseWriter, req *http.Request) {
 
 	var reqAccountData models.SignUpModel
 	if err = reqAccountData.UnmarshalBinary(bodyData); err != nil {
-		r.InternalServerError(w, "Failed to parse request")
+		r.InternalServerError(w)
 		return
 	}
 
@@ -43,7 +43,13 @@ func Signup(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	respModel := models.NewSignUpModelResponse(reqAccountData)
+	newUser, err := models.NewUser(reqAccountData)
+	if err != nil {
+		r.InternalServerError(w)
+		return
+	}
+
+	respModel := models.NewSignUpModelResponse(newUser)
 
 	log.Debug("created: %+v", respModel)
 	r.Ok(w, respModel)

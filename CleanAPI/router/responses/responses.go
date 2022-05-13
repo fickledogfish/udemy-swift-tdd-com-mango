@@ -4,7 +4,7 @@ import (
 	"encoding"
 	"net/http"
 
-	"example.com/api/router/models"
+	"example.com/api/models"
 )
 
 func Ok(w http.ResponseWriter, response encoding.BinaryMarshaler) {
@@ -15,8 +15,10 @@ func BadRequest(w http.ResponseWriter, message string) {
 	writeResponse(w, http.StatusForbidden, models.NewReturnError(message))
 }
 
-func InternalServerError(w http.ResponseWriter, message string) {
-	writeResponse(w, http.StatusInternalServerError, models.NewReturnError(message))
+func InternalServerError(w http.ResponseWriter) {
+	writeResponse(w, http.StatusInternalServerError, models.NewReturnError(
+		"Internal server error",
+	))
 }
 
 func Forbidden(w http.ResponseWriter, message string) {

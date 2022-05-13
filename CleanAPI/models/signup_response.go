@@ -2,8 +2,6 @@ package models
 
 import (
 	"encoding/json"
-
-	"github.com/google/uuid"
 )
 
 type signUpModelResponse struct {
@@ -11,10 +9,10 @@ type signUpModelResponse struct {
 	AccessToken string `json:"accessToken"`
 }
 
-func NewSignUpModelResponse(req SignUpModel) signUpModelResponse {
+func NewSignUpModelResponse(u user) signUpModelResponse {
 	return signUpModelResponse{
-		Name:        req.Name,
-		AccessToken: uuid.New().String(),
+		Name:        u.Name,
+		AccessToken: u.AccessToken,
 	}
 }
 
