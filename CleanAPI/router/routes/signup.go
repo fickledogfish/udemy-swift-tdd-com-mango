@@ -8,14 +8,27 @@ import (
 	"example.com/api/models"
 	r "example.com/api/router/responses"
 	v "example.com/api/validations"
+	vm "example.com/api/validations/models"
 )
 
 type signUpHandler struct {
-	validator v.Validation
+	modelValidator v.Validation[models.SignUpModel]
 }
 
 func NewSignUpHandler() signUpHandler {
-	return signUpHandler{}
+	modelValidator := vm.NewSignUpModelValidator(v.NewEmailValidator())
+
+	return NewSignUpHandlerWithOptions(
+		modelValidator,
+	)
+}
+
+func NewSignUpHandlerWithOptions(
+	modelValidator v.Validation[models.SignUpModel],
+) signUpHandler {
+	return signUpHandler{
+		modelValidator: modelValidator,
+	}
 }
 
 // Implementing http.Handler --------------------------------------------------

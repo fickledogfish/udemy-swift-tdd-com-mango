@@ -6,21 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNotStringsShouldReturnInvalidData(t *testing.T) {
-	// Arrange
-	sut := makeSut()
-
-	type a struct{}
-	notAString := a{}
-
-	// Act
-	errors := sut.IsValid(notAString)
-
-	// Assert
-	assert.NotEmpty(t, errors)
-	assert.Contains(t, errors, VErrInvalidData{})
-}
-
 func TestValidEmailsShouldReturnNoErrors(t *testing.T) {
 	for _, email := range []string{
 		"valid_email@example.com",
@@ -29,7 +14,7 @@ func TestValidEmailsShouldReturnNoErrors(t *testing.T) {
 		t.Logf("Checking %v", email)
 
 		// Arrange
-		sut := makeSut()
+		sut := makeEmailVaidator()
 
 		// Act
 		errors := sut.IsValid(email)
@@ -47,7 +32,7 @@ func TestInvalidEmailAddressShouldReturnInvalidEmailError(t *testing.T) {
 		t.Logf("Checking %v", email)
 
 		// Arrange
-		sut := makeSut()
+		sut := makeEmailVaidator()
 
 		// Act
 		errors := sut.IsValid(email)
@@ -60,6 +45,6 @@ func TestInvalidEmailAddressShouldReturnInvalidEmailError(t *testing.T) {
 
 // Helper functions -----------------------------------------------------------
 
-func makeSut() emailValidator {
-	return emailValidator{}
+func makeEmailVaidator() EmailValidator {
+	return EmailValidator{}
 }

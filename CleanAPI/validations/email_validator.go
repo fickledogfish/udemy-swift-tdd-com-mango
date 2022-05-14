@@ -2,22 +2,17 @@ package validations
 
 import "net/mail"
 
-type emailValidator struct {
+type EmailValidator struct {
 }
 
-func NewEmailValidator() emailValidator {
-	return emailValidator{}
+func NewEmailValidator() EmailValidator {
+	return EmailValidator{}
 }
 
 // Implementing Validation ----------------------------------------------------
 
-func (v emailValidator) IsValid(email any) (errs []Error) {
-	emailString, ok := email.(string)
-	if !ok {
-		return []Error{VErrInvalidData{}}
-	}
-
-	_, err := mail.ParseAddress(emailString)
+func (v EmailValidator) IsValid(email string) (errs []Error) {
+	_, err := mail.ParseAddress(email)
 	if err != nil {
 		errs = append(errs, VErrInvalidEmail{})
 	}
