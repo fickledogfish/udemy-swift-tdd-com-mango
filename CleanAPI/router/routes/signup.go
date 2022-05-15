@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"example.com/api/crypt"
 	"example.com/api/log"
 	"example.com/api/models"
 	r "example.com/api/router/responses"
@@ -13,21 +14,26 @@ import (
 
 type signUpHandler struct {
 	modelValidator v.Validation[models.SignUp]
+	passwordHasher crypt.IPasswordHasher
 }
 
 func NewSignUpHandler() signUpHandler {
 	modelValidator := vm.NewSignUpModelValidator(v.NewEmailValidator())
+	passwordHasher := crypt.NewPasswordHasher()
 
 	return NewSignUpHandlerWithOptions(
 		modelValidator,
+		passwordHasher,
 	)
 }
 
 func NewSignUpHandlerWithOptions(
 	modelValidator v.Validation[models.SignUp],
+	passwordHasher crypt.IPasswordHasher,
 ) signUpHandler {
 	return signUpHandler{
 		modelValidator: modelValidator,
+		passwordHasher: passwordHasher,
 	}
 }
 
@@ -67,7 +73,7 @@ func (h signUpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	newUser, err := models.NewUser(reqAccountData)
+	newUser, err := models.NewUser(h.passwordHasher, reqAccountData)
 	if err != nil {
 		r.InternalServerError(w)
 		return
