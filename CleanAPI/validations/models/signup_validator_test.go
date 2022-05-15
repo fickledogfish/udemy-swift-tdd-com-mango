@@ -7,7 +7,7 @@ import (
 
 	"example.com/api/models"
 	v "example.com/api/validations"
-	vt "example.com/api/validations/tests"
+	vt "example.com/api/validations/test"
 )
 
 func TestIsValidShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
