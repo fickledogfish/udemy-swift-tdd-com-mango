@@ -2,18 +2,18 @@ package crypttest
 
 type hasherCompletion func(string) ([]byte, error)
 
-type passwordHasher struct {
+type passwordHasherMock struct {
 	completeWith hasherCompletion
 }
 
-func NewPasswordHasher(completion hasherCompletion) passwordHasher {
-	return passwordHasher{
+func NewPasswordHasherMock(completion hasherCompletion) passwordHasherMock {
+	return passwordHasherMock{
 		completeWith: completion,
 	}
 }
 
 // Implementing IPasswordHasher -----------------------------------------------
 
-func (h passwordHasher) Hash(password string) ([]byte, error) {
+func (h passwordHasherMock) Hash(password string) ([]byte, error) {
 	return h.completeWith(password)
 }
