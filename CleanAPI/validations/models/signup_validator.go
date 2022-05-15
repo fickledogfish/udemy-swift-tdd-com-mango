@@ -19,7 +19,7 @@ func NewSignUpModelValidator(
 
 // Implementing Validation ----------------------------------------------------
 
-func (v SignUpModelValidator) IsValid(data m.SignUpModel) (errors []v.Error) {
+func (v SignUpModelValidator) IsValid(data m.SignUp) (errors []v.Error) {
 	errors = append(errors, v.emailValidator.IsValid(data.Email)...)
 
 	return

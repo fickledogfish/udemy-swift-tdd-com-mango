@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 )
 
-type signUpModelResponse struct {
+type signUpResponse struct {
 	Name        string `json:"name"`
 	AccessToken string `json:"accessToken"`
 }
 
-func NewSignUpModelResponse(u User) signUpModelResponse {
-	return signUpModelResponse{
+func NewSignUpResponse(u User) signUpResponse {
+	return signUpResponse{
 		Name:        u.Name,
 		AccessToken: u.AccessToken,
 	}
@@ -18,6 +18,6 @@ func NewSignUpModelResponse(u User) signUpModelResponse {
 
 // Implementing encoding.BinaryMarshaler --------------------------------------
 
-func (s signUpModelResponse) MarshalBinary() ([]byte, error) {
+func (s signUpResponse) MarshalBinary() ([]byte, error) {
 	return json.Marshal(s)
 }

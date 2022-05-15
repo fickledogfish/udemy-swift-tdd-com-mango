@@ -21,12 +21,13 @@ func TestIsValidShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 		return []v.Error{}
 	})
 
+	signUpModel := makeSignUpModel()
+	signUpModel.Email = expectedEmail
+
 	sut := makeSignUpModelValidator(emailValidatorMock)
 
 	// Act
-	sut.IsValid(models.SignUpModel{
-		Email: expectedEmail,
-	})
+	sut.IsValid(signUpModel)
 
 	// Assert
 	assert.Equal(t, expectedEmail, receivedEmail)
@@ -40,7 +41,7 @@ func TestIsValidShouldReturnNothingIfEmailValidatorReturnsNothing(t *testing.T) 
 	sut := makeSignUpModelValidator(emailValidatorMock)
 
 	// Act
-	errors := sut.IsValid(models.SignUpModel{})
+	errors := sut.IsValid(makeSignUpModel())
 
 	// Assert
 	assert.Empty(t, errors)
@@ -58,7 +59,7 @@ func TestIsValidShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) {
 	sut := makeSignUpModelValidator(emailValidatorMock)
 
 	// Act
-	errors := sut.IsValid(models.SignUpModel{})
+	errors := sut.IsValid(makeSignUpModel())
 
 	// Assert
 	assert.NotEmpty(t, errors)
@@ -75,4 +76,8 @@ func makeSignUpModelValidator(
 	return SignUpModelValidator{
 		emailValidator: emailValidator,
 	}
+}
+
+func makeSignUpModel() models.SignUp {
+	return models.SignUp{}
 }

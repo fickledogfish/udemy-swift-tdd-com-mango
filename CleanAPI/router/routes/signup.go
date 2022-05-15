@@ -12,7 +12,7 @@ import (
 )
 
 type signUpHandler struct {
-	modelValidator v.Validation[models.SignUpModel]
+	modelValidator v.Validation[models.SignUp]
 }
 
 func NewSignUpHandler() signUpHandler {
@@ -24,7 +24,7 @@ func NewSignUpHandler() signUpHandler {
 }
 
 func NewSignUpHandlerWithOptions(
-	modelValidator v.Validation[models.SignUpModel],
+	modelValidator v.Validation[models.SignUp],
 ) signUpHandler {
 	return signUpHandler{
 		modelValidator: modelValidator,
@@ -48,7 +48,7 @@ func (h signUpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var reqAccountData models.SignUpModel
+	var reqAccountData models.SignUp
 	if err = reqAccountData.UnmarshalBinary(bodyData); err != nil {
 		r.InternalServerError(w)
 		return
@@ -73,7 +73,7 @@ func (h signUpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	respModel := models.NewSignUpModelResponse(newUser)
+	respModel := models.NewSignUpResponse(newUser)
 
 	log.Debug("created: %+v", respModel)
 	r.Ok(w, respModel)

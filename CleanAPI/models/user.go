@@ -12,7 +12,7 @@ type User struct {
 	PasswordHash []byte
 }
 
-func NewUser(requestModel SignUpModel) (newUser User, err error) {
+func NewUser(requestModel SignUp) (newUser User, err error) {
 	passHash, err := crypt.HashPassword(requestModel.Password)
 	if err != nil {
 		return

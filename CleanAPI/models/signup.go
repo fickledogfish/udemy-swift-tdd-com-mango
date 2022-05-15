@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-type SignUpModel struct {
+type SignUp struct {
 	Name                 string `json:"name"`
 	Email                string `json:"email"`
 	Password             string `json:"password"`
@@ -14,7 +14,7 @@ type SignUpModel struct {
 
 // Implementing encoding.BinaryUnmarshaler ------------------------------------
 
-func (s *SignUpModel) UnmarshalBinary(data []byte) error {
+func (s *SignUp) UnmarshalBinary(data []byte) error {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
 
