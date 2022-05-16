@@ -6,6 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEnsureEmailValidatorImplementsValidation(t *testing.T) {
+	// Arrange
+	var sut interface{} = NewEmailValidator()
+
+	// Act
+	_, ok := sut.(Validation[string])
+
+	// Assert
+	assert.True(t, ok)
+}
+
 func TestValidEmailsShouldReturnNoErrors(t *testing.T) {
 	for _, email := range []string{
 		"valid_email@example.com",
