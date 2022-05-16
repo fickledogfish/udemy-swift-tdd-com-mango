@@ -7,14 +7,7 @@ import (
 )
 
 func TestEnsureEmailValidatorImplementsValidation(t *testing.T) {
-	// Arrange
-	var sut interface{} = NewEmailValidator()
-
-	// Act
-	_, ok := sut.(Validation[string])
-
-	// Assert
-	assert.True(t, ok)
+	assert.Implements(t, (*Validation[string])(nil), new(EmailValidator))
 }
 
 func TestValidEmailsShouldReturnNoErrors(t *testing.T) {

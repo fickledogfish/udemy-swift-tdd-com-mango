@@ -11,18 +11,11 @@ import (
 )
 
 func TestEnsureSignUpValidatorImplementsValidation(t *testing.T) {
-	// Arrange
-	emailValidatorMock := vt.NewEmailValidatorMock(func(string) []v.Error {
-		return []v.Error{}
-	})
-
-	var sut interface{} = makeSignUpModelValidator(emailValidatorMock)
-
-	// Act
-	_, ok := sut.(v.Validation[models.SignUp])
-
-	// Assert
-	assert.True(t, ok)
+	assert.Implements(
+		t,
+		(*v.Validation[models.SignUp])(nil),
+		new(SignUpModelValidator),
+	)
 }
 
 func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
