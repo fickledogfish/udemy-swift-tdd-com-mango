@@ -1,11 +1,16 @@
 package models
 
 import (
+	"encoding"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestEnsureReturnErrorImplementsBinaryMarshaler(t *testing.T) {
+	assert.Implements(t, (*encoding.BinaryMarshaler)(nil), new(returnError))
+}
 
 func TestNewReturnErrorShouldInitAllFields(t *testing.T) {
 	// Arrange

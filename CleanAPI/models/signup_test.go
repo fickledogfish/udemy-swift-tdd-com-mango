@@ -1,11 +1,16 @@
 package models
 
 import (
+	"encoding"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestEnsureSignUpImplementsBinaryUnmarshaler(t *testing.T) {
+	assert.Implements(t, (*encoding.BinaryUnmarshaler)(nil), new(SignUp))
+}
 
 func TestUnmarshalBinaryShouldAcceptAValidJSONString(t *testing.T) {
 	// Arrange

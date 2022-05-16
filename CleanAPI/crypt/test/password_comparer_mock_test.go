@@ -1,6 +1,12 @@
 package crypttest
 
-import "fmt"
+import (
+	"fmt"
+	"testing"
+
+	"example.com/api/crypt"
+	"github.com/stretchr/testify/assert"
+)
 
 func ExampleNewPasswordComparerMock() {
 	passwordComparer := NewPasswordComparerMock(func(hash []byte) bool {
@@ -10,4 +16,12 @@ func ExampleNewPasswordComparerMock() {
 
 	passwordComparer.MatchesHash([]byte("some hash"))
 	// Output: Hash is: some hash
+}
+
+func TestEnsurePasswordComparerMockImplementsIPasswordComparer(t *testing.T) {
+	assert.Implements(
+		t,
+		(*crypt.IPasswordComparer)(nil),
+		new(passwordComparerMock),
+	)
 }
