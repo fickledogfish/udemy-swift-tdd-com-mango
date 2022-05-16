@@ -33,7 +33,7 @@ func writeResponse(
 	encodedMessage, err := response.MarshalBinary()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("{\"error\": \"Internal server error\"}"))
+		w.Write([]byte("{\"error\":\"Internal server error\"}"))
 	}
 
 	w.WriteHeader(code)

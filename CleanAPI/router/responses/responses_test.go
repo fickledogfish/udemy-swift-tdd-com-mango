@@ -2,6 +2,7 @@ package responses
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +12,25 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestWriteResponseShouldAnswerWithInternalErrorOnMarshalFailure(t *testing.T) {
+	// Arrange
+	response := NewDummyResponse("some_message")
+	response.MarshalWith = func() ([]byte, error) {
+		return []byte{}, errors.New("error")
+	}
+
+	writer := httptest.NewRecorder()
+
+	// Act
+	writeResponse(writer, http.StatusTeapot, response)
+
+	body, err := ioutil.ReadAll(writer.Body)
+	require.NoError(t, err)
+
+	// Assert
+	assert.Equal(t, "{\"error\":\"Internal server error\"}", string(body))
+}
 
 func TestEnsureOkWritesStatusHeaderAndResponse(t *testing.T) {
 	// Arrange
@@ -97,14 +117,21 @@ func TestEnsureForbiddenWritesStatusHeaderAndResponse(t *testing.T) {
 
 type DummyResponse struct {
 	Message string `json:"message"`
+
+	MarshalWith func() ([]byte, error) `json:"-"`
 }
 
 func NewDummyResponse(message string) DummyResponse {
 	return DummyResponse{
-		Message: message,
+		Message:     message,
+		MarshalWith: nil,
 	}
 }
 
 func (d DummyResponse) MarshalBinary() ([]byte, error) {
+	if d.MarshalWith != nil {
+		return d.MarshalWith()
+	}
+
 	return json.Marshal(d)
 }
