@@ -12,7 +12,7 @@ func ExampleNewEmailValidatorMock() {
 		return []v.Error{}
 	})
 
-	emailValidator.IsValid("some_email@example.com")
+	emailValidator.Validate("some_email@example.com")
 
 	// Output: Email is some_email@example.com
 }

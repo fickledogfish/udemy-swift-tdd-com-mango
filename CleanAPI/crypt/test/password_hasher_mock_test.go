@@ -11,6 +11,5 @@ func ExampleNewPasswordHasherMock() {
 	)
 
 	passwordHasher.Hash("some password")
-
 	// Output: Password is: some password
 }

@@ -14,7 +14,8 @@ func TestNewUserShouldHashTheUsersPassword(t *testing.T) {
 	email := "some_email@company.site"
 
 	requestModel := SignUp{
-		Name: name,
+		Name:  name,
+		Email: email,
 	}
 
 	expectedPasswordHash := "some_hash"

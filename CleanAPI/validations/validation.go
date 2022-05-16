@@ -1,7 +1,7 @@
 package validations
 
 type Validation[T any] interface {
-	IsValid(T) []Error
+	Validate(T) []Error
 }
 
 type Error interface {

@@ -17,7 +17,7 @@ func TestValidEmailsShouldReturnNoErrors(t *testing.T) {
 		sut := makeEmailVaidator()
 
 		// Act
-		errors := sut.IsValid(email)
+		errors := sut.Validate(email)
 
 		// Assert
 		assert.Empty(t, errors)
@@ -35,7 +35,7 @@ func TestInvalidEmailAddressShouldReturnInvalidEmailError(t *testing.T) {
 		sut := makeEmailVaidator()
 
 		// Act
-		errors := sut.IsValid(email)
+		errors := sut.Validate(email)
 
 		// Assert
 		assert.NotEmpty(t, errors)

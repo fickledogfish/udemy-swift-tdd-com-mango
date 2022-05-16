@@ -9,6 +9,5 @@ func ExampleNewPasswordComparerMock() {
 	})
 
 	passwordComparer.MatchesHash([]byte("some hash"))
-
 	// Output: Hash is: some hash
 }

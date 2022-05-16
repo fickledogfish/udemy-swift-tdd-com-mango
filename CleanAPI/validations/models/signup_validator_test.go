@@ -10,7 +10,7 @@ import (
 	vt "example.com/api/validations/test"
 )
 
-func TestIsValidShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
+func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 	// Arrange
 	expectedEmail := "expected_email@example.com"
 
@@ -27,13 +27,13 @@ func TestIsValidShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 	sut := makeSignUpModelValidator(emailValidatorMock)
 
 	// Act
-	sut.IsValid(signUpModel)
+	sut.Validate(signUpModel)
 
 	// Assert
 	assert.Equal(t, expectedEmail, receivedEmail)
 }
 
-func TestIsValidShouldReturnNothingIfEmailValidatorReturnsNothing(t *testing.T) {
+func TestValidateShouldReturnNothingIfEmailValidatorReturnsNothing(t *testing.T) {
 	// Arrange
 	emailValidatorMock := vt.NewEmailValidatorMock(func(string) []v.Error {
 		return []v.Error{}
@@ -41,13 +41,13 @@ func TestIsValidShouldReturnNothingIfEmailValidatorReturnsNothing(t *testing.T) 
 	sut := makeSignUpModelValidator(emailValidatorMock)
 
 	// Act
-	errors := sut.IsValid(makeSignUpModel())
+	errors := sut.Validate(makeSignUpModel())
 
 	// Assert
 	assert.Empty(t, errors)
 }
 
-func TestIsValidShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) {
+func TestValidateShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) {
 	// Arrange
 	expectedErrors := []v.Error{
 		v.VErrInvalidEmail{},
@@ -59,7 +59,7 @@ func TestIsValidShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) {
 	sut := makeSignUpModelValidator(emailValidatorMock)
 
 	// Act
-	errors := sut.IsValid(makeSignUpModel())
+	errors := sut.Validate(makeSignUpModel())
 
 	// Assert
 	assert.NotEmpty(t, errors)

@@ -11,7 +11,7 @@ func NewEmailValidator() EmailValidator {
 
 // Implementing Validation ----------------------------------------------------
 
-func (v EmailValidator) IsValid(email string) (errs []Error) {
+func (v EmailValidator) Validate(email string) (errs []Error) {
 	_, err := mail.ParseAddress(email)
 	if err != nil {
 		errs = append(errs, VErrInvalidEmail{})
