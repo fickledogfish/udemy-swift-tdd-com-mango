@@ -10,6 +10,21 @@ import (
 	vt "example.com/api/validations/test"
 )
 
+func TestEnsureSignUpValidatorImplementsValidation(t *testing.T) {
+	// Arrange
+	emailValidatorMock := vt.NewEmailValidatorMock(func(string) []v.Error {
+		return []v.Error{}
+	})
+
+	var sut interface{} = makeSignUpModelValidator(emailValidatorMock)
+
+	// Act
+	_, ok := sut.(v.Validation[models.SignUp])
+
+	// Assert
+	assert.True(t, ok)
+}
+
 func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 	// Arrange
 	expectedEmail := "expected_email@example.com"
