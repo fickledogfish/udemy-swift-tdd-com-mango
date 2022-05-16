@@ -12,7 +12,7 @@ func Ok(w http.ResponseWriter, response encoding.BinaryMarshaler) {
 }
 
 func BadRequest(w http.ResponseWriter, message string) {
-	writeResponse(w, http.StatusForbidden, models.NewReturnError(message))
+	writeResponse(w, http.StatusBadRequest, models.NewReturnError(message))
 }
 
 func InternalServerError(w http.ResponseWriter) {
