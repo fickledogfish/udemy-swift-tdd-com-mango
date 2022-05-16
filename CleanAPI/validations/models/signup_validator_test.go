@@ -18,6 +18,19 @@ func TestEnsureSignUpValidatorImplementsValidation(t *testing.T) {
 	)
 }
 
+func TestNewSignUpModelValidatorShouldInitializeAllFields(t *testing.T) {
+	// Arrange
+	emailValidator := vt.NewEmailValidatorMock(func(string) []v.Error {
+		return []v.Error{}
+	})
+
+	// Act
+	sut := NewSignUpModelValidator(emailValidator)
+
+	// Assert
+	assert.NotNil(t, sut.emailValidator)
+}
+
 func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 	// Arrange
 	expectedEmail := "expected_email@example.com"
