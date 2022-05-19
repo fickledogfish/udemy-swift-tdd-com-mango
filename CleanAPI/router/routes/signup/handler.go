@@ -1,6 +1,7 @@
-package routes
+package signup
 
 import (
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -12,26 +13,29 @@ import (
 	vm "example.com/api/validations/models"
 )
 
-type signUpHandler struct {
+type handler struct {
 	modelValidator v.Validation[models.SignUp]
 	passwordHasher crypt.IPasswordHasher
 }
 
-func NewSignUpHandler() signUpHandler {
+// Creates the default handler with its dependencies.
+func NewHandler() http.Handler {
 	modelValidator := vm.NewSignUpModelValidator(v.NewEmailValidator())
 	passwordHasher := crypt.NewPasswordHasher()
 
-	return NewSignUpHandlerWithOptions(
+	return NewHandlerWithOptions(
 		modelValidator,
 		passwordHasher,
 	)
 }
 
-func NewSignUpHandlerWithOptions(
+// Like NewHandler(), but this allows for the dependencies to be injected into
+// the handler.
+func NewHandlerWithOptions(
 	modelValidator v.Validation[models.SignUp],
 	passwordHasher crypt.IPasswordHasher,
-) signUpHandler {
-	return signUpHandler{
+) http.Handler {
+	return handler{
 		modelValidator: modelValidator,
 		passwordHasher: passwordHasher,
 	}
@@ -39,7 +43,7 @@ func NewSignUpHandlerWithOptions(
 
 // Implementing http.Handler --------------------------------------------------
 
-func (h signUpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (h handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if req.Method != http.MethodPost {
 		r.Forbidden(w, "Forbidden")
@@ -47,7 +51,7 @@ func (h signUpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	bodyData, err := ioutil.ReadAll(req.Body)
+	bodyData, err := ioutil.ReadAll(io.LimitReader(req.Body, 32))
 	if err != nil {
 		r.BadRequest(w, "Failed to read request")
 		log.Info(err.Error())
