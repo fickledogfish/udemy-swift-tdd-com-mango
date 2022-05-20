@@ -104,6 +104,22 @@ func TestEnsureForbiddenWritesStatusHeaderAndResponse(t *testing.T) {
 	)
 }
 
+func TestEnsureNotFoundWritesStatusHeaderAndResponse(t *testing.T) {
+	// Arrange
+	sut := makeResponsesSut()
+
+	// Act
+	NotFound(sut.ResponseRecorder)
+
+	// Assert
+	assert.Equal(t, http.StatusNotFound, sut.ResponseRecorder.Code)
+	assert.Equal(
+		t,
+		"{\"error\":\"Not found\"}",
+		sut.ReadResponseBody(t),
+	)
+}
+
 // Helper types ---------------------------------------------------------------
 
 type DummyResponse struct {

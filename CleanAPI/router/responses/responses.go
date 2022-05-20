@@ -25,6 +25,12 @@ func Forbidden(w http.ResponseWriter, message string) {
 	writeResponse(w, http.StatusForbidden, models.NewReturnError(message))
 }
 
+func NotFound(w http.ResponseWriter) {
+	writeResponse(w, http.StatusNotFound, models.NewReturnError(
+		"Not found",
+	))
+}
+
 func writeResponse(
 	w http.ResponseWriter,
 	code int,
