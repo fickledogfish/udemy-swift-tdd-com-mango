@@ -14,7 +14,7 @@ func NewEmailValidator() EmailValidator {
 func (v EmailValidator) Validate(email string) (errs []Error) {
 	_, err := mail.ParseAddress(email)
 	if err != nil {
-		errs = append(errs, VErrInvalidEmail{})
+		errs = append(errs, invalidEmail())
 	}
 
 	return
@@ -23,6 +23,10 @@ func (v EmailValidator) Validate(email string) (errs []Error) {
 // Email validation errors ----------------------------------------------------
 
 type VErrInvalidEmail struct{}
+
+func invalidEmail() VErrInvalidEmail {
+	return VErrInvalidEmail{}
+}
 
 func (e VErrInvalidEmail) Error() string {
 	return "Invalid email address"
