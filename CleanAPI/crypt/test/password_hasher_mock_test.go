@@ -24,6 +24,6 @@ func TestEnsurePasswordHasherMockImplementsIPasswordHasher(t *testing.T) {
 	assert.Implements(
 		t,
 		(*crypt.IPasswordHasher)(nil),
-		new(passwordHasherMock),
+		new(PasswordHasherMock),
 	)
 }

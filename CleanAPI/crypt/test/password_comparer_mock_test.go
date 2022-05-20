@@ -22,6 +22,6 @@ func TestEnsurePasswordComparerMockImplementsIPasswordComparer(t *testing.T) {
 	assert.Implements(
 		t,
 		(*crypt.IPasswordComparer)(nil),
-		new(passwordComparerMock),
+		new(PasswordComparerMock),
 	)
 }

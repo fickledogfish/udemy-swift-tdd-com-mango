@@ -2,20 +2,20 @@ package crypttest
 
 type comparerCompletion func([]byte) bool
 
-type passwordComparerMock struct {
-	completeWith comparerCompletion
+type PasswordComparerMock struct {
+	CompleteWith comparerCompletion
 }
 
 func NewPasswordComparerMock(
 	completion comparerCompletion,
-) passwordComparerMock {
-	return passwordComparerMock{
-		completeWith: completion,
+) PasswordComparerMock {
+	return PasswordComparerMock{
+		CompleteWith: completion,
 	}
 }
 
 // Implementing IPasswordComparer ---------------------------------------------
 
-func (c passwordComparerMock) MatchesHash(hash []byte) bool {
-	return c.completeWith(hash)
+func (c PasswordComparerMock) MatchesHash(hash []byte) bool {
+	return c.CompleteWith(hash)
 }
