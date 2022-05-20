@@ -9,6 +9,7 @@ import (
 	"example.com/api/log"
 	"example.com/api/models"
 	r "example.com/api/router/responses"
+	u "example.com/api/router/routes/utils"
 	v "example.com/api/validations"
 	vm "example.com/api/validations/models"
 )
@@ -44,7 +45,8 @@ func NewHandlerWithOptions(
 // Implementing http.Handler --------------------------------------------------
 
 func (h handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	u.SetContentTypeHeader(w, u.ContentTypeApplicationJSON)
+
 	if req.Method != http.MethodPost {
 		r.Forbidden(w, "Forbidden")
 		log.Info("%v", req.Method)
