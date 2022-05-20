@@ -15,101 +15,92 @@ import (
 
 func TestWriteResponseShouldAnswerWithInternalErrorOnMarshalFailure(t *testing.T) {
 	// Arrange
-	response := NewDummyResponse("some_message")
-	response.MarshalWith = func() ([]byte, error) {
+	sut := makeResponsesSut()
+	sut.Response.MarshalWith = func() ([]byte, error) {
 		return []byte{}, errors.New("error")
 	}
 
-	writer := httptest.NewRecorder()
-
 	// Act
-	writeResponse(writer, http.StatusTeapot, response)
-
-	body, err := ioutil.ReadAll(writer.Body)
-	require.NoError(t, err)
+	writeResponse(sut.ResponseRecorder, http.StatusOK, sut.Response)
 
 	// Assert
-	assert.Equal(t, "{\"error\":\"Internal server error\"}", string(body))
+	assert.Equal(
+		t,
+		"{\"error\":\"Internal server error\"}",
+		sut.ReadResponseBody(t),
+	)
 }
 
 func TestEnsureOkWritesStatusHeaderAndResponse(t *testing.T) {
 	// Arrange
 	message := "ok"
-	response := NewDummyResponse(message)
 
-	writer := httptest.NewRecorder()
+	sut := makeResponsesSut()
+	sut.Response.Message = message
 
 	// Act
-	Ok(writer, response)
-
-	body, err := ioutil.ReadAll(writer.Body)
-	require.NoError(t, err)
+	Ok(sut.ResponseRecorder, sut.Response)
 
 	// Assert
-	assert.Equal(t, http.StatusOK, writer.Code)
+	assert.Equal(t, http.StatusOK, sut.ResponseRecorder.Code)
 	assert.Equal(
 		t,
 		fmt.Sprintf("{\"message\":\"%s\"}", message),
-		string(body),
+		sut.ReadResponseBody(t),
 	)
 }
 
 func TestEnsureBadRequestWritesStatusHeaderAndResponse(t *testing.T) {
 	// Arrange
 	message := "bad request"
-	writer := httptest.NewRecorder()
+
+	sut := makeResponsesSut()
+	sut.Response.Message = message
 
 	// Act
-	BadRequest(writer, message)
-
-	body, err := ioutil.ReadAll(writer.Body)
-	require.NoError(t, err)
+	BadRequest(sut.ResponseRecorder, message)
 
 	// Assert
-	assert.Equal(t, http.StatusBadRequest, writer.Code)
+	assert.Equal(t, http.StatusBadRequest, sut.ResponseRecorder.Code)
 	assert.Equal(
 		t,
 		fmt.Sprintf("{\"error\":\"%s\"}", message),
-		string(body),
+		sut.ReadResponseBody(t),
 	)
 }
 
 func TestEnsureInternalServerErrorWritesStatusHeaderAndResponse(t *testing.T) {
 	// Arrange
-	writer := httptest.NewRecorder()
+	sut := makeResponsesSut()
 
 	// Act
-	InternalServerError(writer)
-
-	body, err := ioutil.ReadAll(writer.Body)
-	require.NoError(t, err)
+	InternalServerError(sut.ResponseRecorder)
 
 	// Assert
-	assert.Equal(t, http.StatusInternalServerError, writer.Code)
+	assert.Equal(t, http.StatusInternalServerError, sut.ResponseRecorder.Code)
 	assert.Equal(
 		t,
 		"{\"error\":\"Internal server error\"}",
-		string(body),
+		sut.ReadResponseBody(t),
 	)
 }
 
 func TestEnsureForbiddenWritesStatusHeaderAndResponse(t *testing.T) {
 	// Arrange
 	message := "forbidden"
-	writer := httptest.NewRecorder()
+
+	sut := makeResponsesSut()
+	sut.Response.Message = message
 
 	// Act
-	Forbidden(writer, message)
-
-	body, err := ioutil.ReadAll(writer.Body)
-	require.NoError(t, err)
+	Forbidden(sut.ResponseRecorder, message)
 
 	// Assert
-	assert.Equal(t, http.StatusForbidden, writer.Code)
+	assert.Equal(t, http.StatusForbidden, sut.ResponseRecorder.Code)
 	assert.Equal(
 		t,
 		fmt.Sprintf("{\"error\":\"%s\"}", message),
-		string(body),
+		sut.ReadResponseBody(t),
 	)
 }
 
@@ -121,17 +112,33 @@ type DummyResponse struct {
 	MarshalWith func() ([]byte, error) `json:"-"`
 }
 
-func NewDummyResponse(message string) DummyResponse {
-	return DummyResponse{
-		Message:     message,
-		MarshalWith: nil,
-	}
-}
-
 func (d DummyResponse) MarshalBinary() ([]byte, error) {
 	if d.MarshalWith != nil {
 		return d.MarshalWith()
 	}
 
 	return json.Marshal(d)
+}
+
+// File SUT -------------------------------------------------------------------
+
+type responsesSut struct {
+	ResponseRecorder *httptest.ResponseRecorder
+	Response         DummyResponse
+}
+
+func makeResponsesSut() responsesSut {
+	return responsesSut{
+		ResponseRecorder: httptest.NewRecorder(),
+		Response: DummyResponse{
+			Message: "some_message",
+		},
+	}
+}
+
+func (r responsesSut) ReadResponseBody(t *testing.T) string {
+	body, err := ioutil.ReadAll(r.ResponseRecorder.Body)
+	require.NoError(t, err)
+
+	return string(body)
 }
