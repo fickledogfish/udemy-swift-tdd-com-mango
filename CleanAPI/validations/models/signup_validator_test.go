@@ -20,35 +20,32 @@ func TestEnsureSignUpValidatorImplementsValidation(t *testing.T) {
 
 func TestNewSignUpModelValidatorShouldInitializeAllFields(t *testing.T) {
 	// Arrange
-	emailValidator := vt.NewEmailValidatorMock(func(string) []v.Error {
-		return []v.Error{}
-	})
+	sut := makeSignUpModelValidatorSut()
 
 	// Act
-	sut := NewSignUpModelValidator(emailValidator)
+	modelValidator := NewSignUpModelValidator(sut.EmailValidator)
 
 	// Assert
-	assert.NotNil(t, sut.emailValidator)
+	assert.NotNil(t, modelValidator.emailValidator)
 }
 
 func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 	// Arrange
+	sut := makeSignUpModelValidatorSut()
+
 	expectedEmail := "expected_email@example.com"
 
 	var receivedEmail string
-	emailValidatorMock := vt.NewEmailValidatorMock(func(email string) []v.Error {
+	sut.EmailValidator.ValidateWith = func(email string) []v.Error {
 		receivedEmail = email
 
 		return []v.Error{}
-	})
+	}
 
-	signUpModel := makeSignUpModel()
-	signUpModel.Email = expectedEmail
-
-	sut := makeSignUpModelValidator(emailValidatorMock)
+	sut.SignUpModel.Email = expectedEmail
 
 	// Act
-	sut.Validate(signUpModel)
+	sut.SignUpModelValidator.Validate(sut.SignUpModel)
 
 	// Assert
 	assert.Equal(t, expectedEmail, receivedEmail)
@@ -56,13 +53,10 @@ func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
 
 func TestValidateShouldReturnNothingIfEmailValidatorReturnsNothing(t *testing.T) {
 	// Arrange
-	emailValidatorMock := vt.NewEmailValidatorMock(func(string) []v.Error {
-		return []v.Error{}
-	})
-	sut := makeSignUpModelValidator(emailValidatorMock)
+	sut := makeSignUpModelValidatorSut()
 
 	// Act
-	errors := sut.Validate(makeSignUpModel())
+	errors := sut.SignUpModelValidator.Validate(models.SignUp{})
 
 	// Assert
 	assert.Empty(t, errors)
@@ -70,17 +64,18 @@ func TestValidateShouldReturnNothingIfEmailValidatorReturnsNothing(t *testing.T)
 
 func TestValidateShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) {
 	// Arrange
+	sut := makeSignUpModelValidatorSut()
+
 	expectedErrors := []v.Error{
 		v.VErrInvalidEmail{},
 	}
 
-	emailValidatorMock := vt.NewEmailValidatorMock(func(string) []v.Error {
+	sut.EmailValidator.ValidateWith = func(string) []v.Error {
 		return expectedErrors
-	})
-	sut := makeSignUpModelValidator(emailValidatorMock)
+	}
 
 	// Act
-	errors := sut.Validate(makeSignUpModel())
+	errors := sut.SignUpModelValidator.Validate(models.SignUp{})
 
 	// Assert
 	assert.NotEmpty(t, errors)
@@ -89,16 +84,26 @@ func TestValidateShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) 
 	}
 }
 
-// Helper functions -----------------------------------------------------------
+// File SUT -------------------------------------------------------------------
 
-func makeSignUpModelValidator(
-	emailValidator v.Validation[string],
-) SignUpModelValidator {
-	return SignUpModelValidator{
-		emailValidator: emailValidator,
-	}
+type signUpModelValidatorSut struct {
+	SignUpModel          models.SignUp
+	EmailValidator       *vt.ValidatorMock[string]
+	SignUpModelValidator *SignUpModelValidator
 }
 
-func makeSignUpModel() models.SignUp {
-	return models.SignUp{}
+func makeSignUpModelValidatorSut() signUpModelValidatorSut {
+	emailValidator := vt.NewValidatorMock(func(string) []v.Error {
+		return []v.Error{}
+	})
+
+	signUpModelValidator := SignUpModelValidator{
+		emailValidator: &emailValidator,
+	}
+
+	return signUpModelValidatorSut{
+		SignUpModel:          models.SignUp{},
+		EmailValidator:       &emailValidator,
+		SignUpModelValidator: &signUpModelValidator,
+	}
 }
