@@ -15,6 +15,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestServeHTTPShouldRejectNonPOSTMethodsWithForbidden(t *testing.T) {
+	for _, method := range []string{
+		"GET",
+		"PUT",
+		"DELETE",
+		"UPDATE",
+	} {
+		// Arrange
+		sut := makeHandlerSut()
+		sut.Request.Method = method
+
+		// Act
+		sut.ServeHTTP()
+
+		// Assert
+		assert.Equal(t, http.StatusForbidden, sut.ResponseRecorder.Code)
+	}
+}
+
 func TestServeHTTPShouldSetContentTypeHeader(t *testing.T) {
 	// Arrange
 	sut := makeHandlerSut()
@@ -34,7 +53,6 @@ func TestServeHTTPShouldSetContentTypeHeader(t *testing.T) {
 func TestServeHTTPShouldReturnBadRequestIfBodyReaderFails(t *testing.T) {
 	// Arrange
 	sut := makeHandlerSut()
-	sut.Request.Method = "POST"
 	sut.Request.Body = testutils.NewReaderCloserMock(
 		func([]byte) (int, error) {
 			return 0, errors.New("generic error")
@@ -63,7 +81,7 @@ type handlerSut struct {
 }
 
 func makeHandlerSut() handlerSut {
-	request := httptest.NewRequest("GET", "/", nil)
+	request := httptest.NewRequest("POST", "/", nil)
 	responseRecorder := httptest.NewRecorder()
 
 	modelValidator := vt.NewValidatorMock(func(models.SignUp) []v.Error {
