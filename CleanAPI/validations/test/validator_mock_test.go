@@ -15,7 +15,6 @@ func ExampleNewValidatorMock() {
 	})
 
 	emailValidator.Validate("some_email@example.com")
-
 	// Output: Email is some_email@example.com
 }
 
