@@ -21,7 +21,10 @@ type handler struct {
 
 // Creates the default handler with its dependencies.
 func NewHandler() http.Handler {
-	modelValidator := vm.NewSignUpModelValidator(v.NewEmailValidator())
+	modelValidator := vm.NewSignUpModelValidator(
+		v.NewEmailValidator(),
+		v.NewPasswordValidator(),
+	)
 	passwordHasher := crypt.NewPasswordHasher()
 
 	return NewHandlerWithOptions(
