@@ -84,6 +84,20 @@ func TestServeHTTPShouldReturnBadRequestOnInvalidRequest(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, sut.ResponseRecorder.Code)
 }
 
+func TestServeHTTPShouldReturnBadRequestOnValidationError(t *testing.T) {
+	// Arrange
+	sut := makeHandlerSut()
+	sut.ModelValidator.ValidateWith = func(models.SignUp) []v.Error {
+		return []v.Error{v.VErrInvalidEmail{}}
+	}
+
+	// Act
+	sut.ServeHTTP()
+
+	// Assert
+	assert.Equal(t, http.StatusBadRequest, sut.ResponseRecorder.Code)
+}
+
 // File SUT -------------------------------------------------------------------
 
 type handlerSut struct {

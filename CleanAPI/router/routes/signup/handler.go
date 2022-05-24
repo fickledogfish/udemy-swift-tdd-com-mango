@@ -67,16 +67,8 @@ func (h handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if reqAccountData.Name == "" ||
-		reqAccountData.Email == "" ||
-		reqAccountData.Password == "" ||
-		reqAccountData.PasswordConfirmation == "" {
-		r.BadRequest(w, "Missing fields")
-		return
-	}
-
-	if reqAccountData.Password != reqAccountData.PasswordConfirmation {
-		r.BadRequest(w, "Password confirmation does not match")
+	if len(h.modelValidator.Validate(reqAccountData)) > 0 {
+		r.BadRequest(w, "Bad request")
 		return
 	}
 
