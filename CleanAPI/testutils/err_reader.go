@@ -3,16 +3,16 @@ package testutils
 type readFunc func([]byte) (int, error)
 type closeFunc func() error
 
-type ReaderCloserMock struct {
+type ReadCloserMock struct {
 	ReadWith  readFunc
 	CloseWith closeFunc
 }
 
-func NewReaderCloserMock(
+func NewReadCloserMock(
 	readWith readFunc,
 	closeWith closeFunc,
-) ReaderCloserMock {
-	return ReaderCloserMock{
+) ReadCloserMock {
+	return ReadCloserMock{
 		ReadWith:  readWith,
 		CloseWith: closeWith,
 	}
@@ -20,12 +20,12 @@ func NewReaderCloserMock(
 
 // Implementing io.Reader -----------------------------------------------------
 
-func (m ReaderCloserMock) Read(data []byte) (int, error) {
+func (m ReadCloserMock) Read(data []byte) (int, error) {
 	return m.ReadWith(data)
 }
 
 // Implementing io.Closer -----------------------------------------------------
 
-func (m ReaderCloserMock) Close() error {
+func (m ReadCloserMock) Close() error {
 	return m.CloseWith()
 }

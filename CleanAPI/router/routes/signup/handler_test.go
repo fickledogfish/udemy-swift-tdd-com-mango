@@ -2,8 +2,10 @@ package signup
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	ct "example.com/api/crypt/test"
@@ -50,16 +52,30 @@ func TestServeHTTPShouldSetContentTypeHeader(t *testing.T) {
 	)
 }
 
-func TestServeHTTPShouldReturnBadRequestIfBodyReaderFails(t *testing.T) {
+func TestServeHTTPShouldReturnInternalErrorOnBodyReaderFailure(t *testing.T) {
 	// Arrange
 	sut := makeHandlerSut()
-	sut.Request.Body = testutils.NewReaderCloserMock(
+	sut.Request.Body = testutils.NewReadCloserMock(
 		func([]byte) (int, error) {
 			return 0, errors.New("generic error")
 		}, func() error {
 			return nil
 		},
 	)
+
+	// Act
+	sut.ServeHTTP()
+
+	// Assert
+	assert.Equal(t, http.StatusInternalServerError, sut.ResponseRecorder.Code)
+}
+
+func TestServeHTTPShouldReturnBadRequestOnInvalidRequest(t *testing.T) {
+	// Arrange
+	sut := makeHandlerSut()
+	sut.Request.Body = io.NopCloser(strings.NewReader(
+		"{\"invalid_key\": \"invalid_value\"}",
+	))
 
 	// Act
 	sut.ServeHTTP()

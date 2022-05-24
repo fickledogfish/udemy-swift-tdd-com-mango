@@ -55,14 +55,15 @@ func (h handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	bodyData, err := ioutil.ReadAll(io.LimitReader(req.Body, 32))
 	if err != nil {
-		r.BadRequest(w, "Failed to read request")
+		r.InternalServerError(w)
 		log.Info(err.Error())
 		return
 	}
 
 	var reqAccountData models.SignUp
 	if err = reqAccountData.UnmarshalBinary(bodyData); err != nil {
-		r.InternalServerError(w)
+		r.BadRequest(w, "Failed to read request")
+		log.Info(err.Error())
 		return
 	}
 
