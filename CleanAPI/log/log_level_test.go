@@ -39,6 +39,6 @@ func TestStringShouldPanicOnUnexpectedLogLevels(t *testing.T) {
 		fmt.Sprintf("Unknown log level: %d", invalidLevel),
 		func() {
 			// Act
-			invalidLevel.String()
+			_ = invalidLevel.String()
 		})
 }
