@@ -1,8 +1,6 @@
 package signup
 
 import (
-	"io"
-	"io/ioutil"
 	"net/http"
 
 	"example.com/api/crypt"
@@ -13,6 +11,8 @@ import (
 	v "example.com/api/validations"
 	vm "example.com/api/validations/models"
 )
+
+const bodyMaxSizeBytes = 1000
 
 type handler struct {
 	modelValidator v.Validation[models.SignUp]
@@ -56,7 +56,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	bodyData, err := ioutil.ReadAll(io.LimitReader(req.Body, 32))
+	bodyData, err := u.ReadBody(req, bodyMaxSizeBytes)
 	if err != nil {
 		r.InternalServerError(w)
 		log.Info(err.Error())

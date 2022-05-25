@@ -1,6 +1,8 @@
 package signup
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -68,6 +70,11 @@ func TestServeHTTPShouldReturnInternalErrorOnBodyReaderFailure(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusInternalServerError, sut.ResponseRecorder.Code)
+	assert.Equal(
+		t,
+		"{\"error\":\"Internal server error\"}",
+		sut.ResponseRecorder.Body.String(),
+	)
 }
 
 func TestServeHTTPShouldReturnBadRequestOnInvalidRequest(t *testing.T) {
@@ -82,11 +89,17 @@ func TestServeHTTPShouldReturnBadRequestOnInvalidRequest(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusBadRequest, sut.ResponseRecorder.Code)
+	assert.Equal(
+		t,
+		"{\"error\":\"Failed to read request\"}",
+		sut.ResponseRecorder.Body.String(),
+	)
 }
 
 func TestServeHTTPShouldReturnBadRequestOnValidationError(t *testing.T) {
 	// Arrange
 	sut := makeHandlerSut()
+	sut.AddValidModelToRequestBody(t)
 	sut.ModelValidator.ValidateWith = func(models.SignUp) []v.Error {
 		return []v.Error{v.VErrInvalidEmail{}}
 	}
@@ -96,6 +109,11 @@ func TestServeHTTPShouldReturnBadRequestOnValidationError(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusBadRequest, sut.ResponseRecorder.Code)
+	assert.Equal(
+		t,
+		"{\"error\":\"Bad request\"}",
+		sut.ResponseRecorder.Body.String(),
+	)
 }
 
 // File SUT -------------------------------------------------------------------
@@ -136,6 +154,22 @@ func makeHandlerSut() handlerSut {
 
 		Handler: handler,
 	}
+}
+
+func (sut *handlerSut) AddValidModelToRequestBody(t *testing.T) {
+	body, err := json.Marshal(models.SignUp{
+		Name:                 "some_name",
+		Email:                "some_email",
+		Password:             "some_password",
+		PasswordConfirmation: "some_password_confirmation",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+
+	sut.Request.Body = io.NopCloser(bytes.NewReader(body))
 }
 
 func (sut *handlerSut) ServeHTTP() {
