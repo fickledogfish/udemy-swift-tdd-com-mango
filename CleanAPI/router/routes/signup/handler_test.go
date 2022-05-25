@@ -17,6 +17,7 @@ import (
 	vt "example.com/api/validations/test"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestServeHTTPShouldRejectNonPOSTMethodsWithForbidden(t *testing.T) {
@@ -27,7 +28,7 @@ func TestServeHTTPShouldRejectNonPOSTMethodsWithForbidden(t *testing.T) {
 		"UPDATE",
 	} {
 		// Arrange
-		sut := makeHandlerSut()
+		sut := makeHandlerSut(t)
 		sut.Request.Method = method
 
 		// Act
@@ -40,7 +41,7 @@ func TestServeHTTPShouldRejectNonPOSTMethodsWithForbidden(t *testing.T) {
 
 func TestServeHTTPShouldSetContentTypeHeader(t *testing.T) {
 	// Arrange
-	sut := makeHandlerSut()
+	sut := makeHandlerSut(t)
 
 	// Act
 	sut.ServeHTTP()
@@ -56,7 +57,7 @@ func TestServeHTTPShouldSetContentTypeHeader(t *testing.T) {
 
 func TestServeHTTPShouldReturnInternalErrorOnBodyReaderFailure(t *testing.T) {
 	// Arrange
-	sut := makeHandlerSut()
+	sut := makeHandlerSut(t)
 	sut.Request.Body = testutils.NewReadCloserMock(
 		func([]byte) (int, error) {
 			return 0, errors.New("generic error")
@@ -79,10 +80,8 @@ func TestServeHTTPShouldReturnInternalErrorOnBodyReaderFailure(t *testing.T) {
 
 func TestServeHTTPShouldReturnBadRequestOnInvalidRequest(t *testing.T) {
 	// Arrange
-	sut := makeHandlerSut()
-	sut.Request.Body = io.NopCloser(strings.NewReader(
-		"{\"invalid_key\": \"invalid_value\"}",
-	))
+	sut := makeHandlerSut(t)
+	sut.AddInvalidModelToRequestBody()
 
 	// Act
 	sut.ServeHTTP()
@@ -98,8 +97,7 @@ func TestServeHTTPShouldReturnBadRequestOnInvalidRequest(t *testing.T) {
 
 func TestServeHTTPShouldReturnBadRequestOnValidationError(t *testing.T) {
 	// Arrange
-	sut := makeHandlerSut()
-	sut.AddValidModelToRequestBody(t)
+	sut := makeHandlerSut(t)
 	sut.ModelValidator.ValidateWith = func(models.SignUp) []v.Error {
 		return []v.Error{v.VErrInvalidEmail{}}
 	}
@@ -128,8 +126,21 @@ type handlerSut struct {
 	Handler handler
 }
 
-func makeHandlerSut() handlerSut {
+func makeHandlerSut(t *testing.T) handlerSut {
 	request := httptest.NewRequest("POST", "/", nil)
+	{
+		body, err := json.Marshal(models.SignUp{
+			Name:                 "some_name",
+			Email:                "some_email",
+			Password:             "some_password",
+			PasswordConfirmation: "some_password_confirmation",
+		})
+
+		require.NoError(t, err)
+
+		request.Body = io.NopCloser(bytes.NewReader(body))
+	}
+
 	responseRecorder := httptest.NewRecorder()
 
 	modelValidator := vt.NewValidatorMock(func(models.SignUp) []v.Error {
@@ -156,20 +167,10 @@ func makeHandlerSut() handlerSut {
 	}
 }
 
-func (sut *handlerSut) AddValidModelToRequestBody(t *testing.T) {
-	body, err := json.Marshal(models.SignUp{
-		Name:                 "some_name",
-		Email:                "some_email",
-		Password:             "some_password",
-		PasswordConfirmation: "some_password_confirmation",
-	})
-
-	if err != nil {
-		t.Fatal(err)
-		return
-	}
-
-	sut.Request.Body = io.NopCloser(bytes.NewReader(body))
+func (sut *handlerSut) AddInvalidModelToRequestBody() {
+	sut.Request.Body = io.NopCloser(strings.NewReader(
+		"{\"invalid_key\": \"invalid_value\"}",
+	))
 }
 
 func (sut *handlerSut) ServeHTTP() {
