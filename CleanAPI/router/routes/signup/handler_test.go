@@ -114,6 +114,25 @@ func TestServeHTTPShouldReturnBadRequestOnValidationError(t *testing.T) {
 	)
 }
 
+func TestServeHTTPShouldReturnInternalServerErrorOnHashingFailure(t *testing.T) {
+	// Arrange
+	sut := makeHandlerSut(t)
+	sut.PasswordHasher.CompleteWith = func(string) ([]byte, error) {
+		return []byte{}, errors.New("some_error")
+	}
+
+	// Act
+	sut.ServeHTTP()
+
+	// Assert
+	assert.Equal(t, http.StatusInternalServerError, sut.ResponseRecorder.Code)
+	assert.Equal(
+		t,
+		"{\"error\":\"Internal server error\"}",
+		sut.ResponseRecorder.Body.String(),
+	)
+}
+
 // File SUT -------------------------------------------------------------------
 
 type handlerSut struct {
