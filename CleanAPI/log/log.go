@@ -2,42 +2,56 @@ package log
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
+var logChan chan string
+
+func init() {
+	logChan = make(chan string, 10)
+
+	go func(ch <-chan string) {
+		for message := range ch {
+			func() {
+				lock, conf := getConfig()
+				defer lock.Unlock()
+
+				fmt.Fprintln(conf.writer, message)
+			}()
+		}
+	}(logChan)
+}
+
 func Debug(format string, args ...any) {
-	writeLog(LevelDebug, format, args...)
+	writeLog(logChan, LevelDebug, format, args...)
 }
 
 func Info(format string, args ...any) {
-	writeLog(LevelInfo, format, args...)
+	writeLog(logChan, LevelInfo, format, args...)
 }
 
 func Warn(format string, args ...any) {
-	writeLog(LevelWarning, format, args...)
+	writeLog(logChan, LevelWarning, format, args...)
 }
 
 func Error(format string, args ...any) {
-	writeLog(LevelError, format, args...)
+	writeLog(logChan, LevelError, format, args...)
 }
 
-var logWriterMutex sync.Mutex
+func writeLog(ch chan<- string, level logLevel, format string, args ...any) {
+	go func() {
+		lock, conf := getConfig()
+		defer lock.Unlock()
 
-func writeLog(level logLevel, format string, args ...any) {
-	conf := getConfig()
+		if level < conf.level {
+			return
+		}
 
-	if level < conf.level {
-		return
-	}
-
-	logWriterMutex.Lock()
-	defer logWriterMutex.Unlock()
-
-	fmt.Printf(
-		"[%s] %s => %s\n",
-		level.String(),
-		time.Now().Format(conf.timeFormat),
-		fmt.Sprintf(format, args...),
-	)
+		ch <- fmt.Sprintf(
+			"[%s] %s => %s",
+			level.String(),
+			time.Now().Format(conf.timeFormat),
+			fmt.Sprintf(format, args...),
+		)
+	}()
 }
