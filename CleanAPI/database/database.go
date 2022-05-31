@@ -31,8 +31,9 @@ func NewDatabase[T Identifiable]() Database[T] {
 // Implementing Inserter ------------------------------------------------------
 
 type Inserter[T Identifiable] interface {
-	Insert(t T)
+	Insert(t T) Error
 }
 
-func (d *database[T]) Insert(t T) {
+func (d *database[T]) Insert(t T) Error {
+	return nil
 }
