@@ -18,10 +18,10 @@ func ExampleNewPasswordComparerMock() {
 	// Output: Hash is: some hash
 }
 
-func TestEnsurePasswordComparerMockImplementsIPasswordComparer(t *testing.T) {
+func TestEnsurePasswordComparerMockImplementsPasswordComparer(t *testing.T) {
 	assert.Implements(
 		t,
-		(*crypt.IPasswordComparer)(nil),
+		(*crypt.PasswordComparer)(nil),
 		new(PasswordComparerMock),
 	)
 }

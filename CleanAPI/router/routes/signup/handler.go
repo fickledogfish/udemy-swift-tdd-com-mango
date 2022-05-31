@@ -16,7 +16,7 @@ const bodyMaxSizeBytes = 1000
 
 type handler struct {
 	modelValidator v.Validation[models.SignUp]
-	passwordHasher crypt.IPasswordHasher
+	passwordHasher crypt.PasswordHasher
 }
 
 // Creates the default handler with its dependencies.
@@ -37,7 +37,7 @@ func NewHandler() http.Handler {
 // the handler.
 func NewHandlerWithOptions(
 	modelValidator v.Validation[models.SignUp],
-	passwordHasher crypt.IPasswordHasher,
+	passwordHasher crypt.PasswordHasher,
 ) http.Handler {
 	return handler{
 		modelValidator: modelValidator,

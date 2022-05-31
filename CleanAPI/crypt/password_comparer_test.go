@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEnsurePasswordComparerImplementsIPasswordComparer(t *testing.T) {
+func TestEnsurePasswordComparerImplementsPasswordComparer(t *testing.T) {
 	assert.Implements(
 		t,
-		(*IPasswordComparer)(nil),
+		(*PasswordComparer)(nil),
 		new(passwordComparer),
 	)
 }

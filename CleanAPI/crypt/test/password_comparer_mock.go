@@ -14,7 +14,7 @@ func NewPasswordComparerMock(
 	}
 }
 
-// Implementing IPasswordComparer ---------------------------------------------
+// Implementing PasswordComparer ----------------------------------------------
 
 func (c PasswordComparerMock) MatchesHash(hash []byte) bool {
 	return c.CompleteWith(hash)

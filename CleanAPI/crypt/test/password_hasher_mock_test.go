@@ -20,10 +20,10 @@ func ExampleNewPasswordHasherMock() {
 	// Output: Password is: some password
 }
 
-func TestEnsurePasswordHasherMockImplementsIPasswordHasher(t *testing.T) {
+func TestEnsurePasswordHasherMockImplementsPasswordHasher(t *testing.T) {
 	assert.Implements(
 		t,
-		(*crypt.IPasswordHasher)(nil),
+		(*crypt.PasswordHasher)(nil),
 		new(PasswordHasherMock),
 	)
 }

@@ -12,7 +12,7 @@ func NewPasswordHasherMock(completion hasherCompletion) PasswordHasherMock {
 	}
 }
 
-// Implementing IPasswordHasher -----------------------------------------------
+// Implementing PasswordHasher ------------------------------------------------
 
 func (h PasswordHasherMock) Hash(password string) ([]byte, error) {
 	return h.CompleteWith(password)

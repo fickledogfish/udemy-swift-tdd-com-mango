@@ -13,7 +13,7 @@ type User struct {
 }
 
 func NewUser(
-	passwordHasher crypt.IPasswordHasher,
+	passwordHasher crypt.PasswordHasher,
 	requestModel SignUp,
 ) (newUser User, err error) {
 	passHash, err := passwordHasher.Hash(requestModel.Password)
