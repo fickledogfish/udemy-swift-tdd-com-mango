@@ -28,3 +28,9 @@ func NewUser(
 		PasswordHash: passHash,
 	}, nil
 }
+
+// Implementing database.Identifiable -----------------------------------------
+
+func (u User) Id() string {
+	return u.AccessToken
+}

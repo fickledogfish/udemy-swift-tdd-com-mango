@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"example.com/api/crypt"
+	db "example.com/api/database"
 	"example.com/api/log"
 	"example.com/api/models"
 	r "example.com/api/router/responses"
@@ -17,6 +18,8 @@ const bodyMaxSizeBytes = 1000
 type handler struct {
 	modelValidator v.Validation[models.SignUp]
 	passwordHasher crypt.PasswordHasher
+
+	database db.Inserter[models.User]
 }
 
 // Creates the default handler with its dependencies.
