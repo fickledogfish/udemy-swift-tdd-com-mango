@@ -13,18 +13,27 @@ type database[T Identifiable] struct {
 }
 
 func NewDatabase[T Identifiable]() Database[T] {
-	ch := make(chan event[T])
+	ch := make(chan event[T], 10)
 
-	go func(ch <-chan event[T]) {
+	eventObserver := func(ch <-chan event[T]) {
 		for event := range ch {
 			fmt.Println(event)
 		}
-	}(ch)
+	}
+
+	return NewDatabaseWithOptions(ch, eventObserver)
+}
+
+func NewDatabaseWithOptions[T Identifiable](
+	eventChan chan event[T],
+	eventObserver func(<-chan event[T]),
+) Database[T] {
+	go eventObserver(eventChan)
 
 	return &database[T]{
 		Data: []T{},
 
-		eventChan: ch,
+		eventChan: eventChan,
 	}
 }
 
@@ -35,5 +44,6 @@ type Inserter[T Identifiable] interface {
 }
 
 func (d *database[T]) Insert(t T) Error {
+	d.eventChan <- NewEvent(eventTypeInsert, t)
 	return nil
 }
