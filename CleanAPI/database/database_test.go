@@ -18,6 +18,28 @@ func TestEnsureDatabaseImplementsDatabase(t *testing.T) {
 	)
 }
 
+func TestNewDatabaseShouldStartTheEventObserver(t *testing.T) {
+	// Arrange
+	eventObserverRan := false
+	observer := func(<-chan event[dbt.IdentifiableMock]) {
+		eventObserverRan = true
+	}
+
+	// Act
+	_ = NewDatabaseWithOptions(
+		make(chan event[dbt.IdentifiableMock], 1),
+		observer,
+	)
+
+	// Assert
+	assert.Eventually(
+		t,
+		func() bool { return eventObserverRan },
+		100*time.Millisecond,
+		10*time.Millisecond,
+	)
+}
+
 func TestInsertShouldSendTheIdentifiableToTheChannel(t *testing.T) {
 	// Arrange
 	sut := makeDatabaseSut()
