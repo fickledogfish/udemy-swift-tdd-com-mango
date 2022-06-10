@@ -8,24 +8,22 @@ type ReadCloserMock struct {
 	CloseWith closeFunc
 }
 
-func NewReadCloserMock(
-	readWith readFunc,
-	closeWith closeFunc,
-) ReadCloserMock {
-	return ReadCloserMock{
-		ReadWith:  readWith,
-		CloseWith: closeWith,
-	}
-}
-
 // Implementing io.Reader -----------------------------------------------------
 
 func (m ReadCloserMock) Read(data []byte) (int, error) {
-	return m.ReadWith(data)
+	if m.ReadWith != nil {
+		return m.ReadWith(data)
+	} else {
+		return 0, nil
+	}
 }
 
 // Implementing io.Closer -----------------------------------------------------
 
 func (m ReadCloserMock) Close() error {
-	return m.CloseWith()
+	if m.CloseWith != nil {
+		return m.CloseWith()
+	} else {
+		return nil
+	}
 }

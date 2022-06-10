@@ -58,13 +58,12 @@ func TestServeHTTPShouldSetContentTypeHeader(t *testing.T) {
 func TestServeHTTPShouldReturnInternalErrorOnBodyReaderFailure(t *testing.T) {
 	// Arrange
 	sut := makeHandlerSut(t)
-	sut.Request.Body = testutils.NewReadCloserMock(
-		func([]byte) (int, error) {
+	sut.Request.Body = testutils.ReadCloserMock{
+		ReadWith: func([]byte) (int, error) {
 			return 0, errors.New("generic error")
-		}, func() error {
-			return nil
 		},
-	)
+	}
+	defer sut.Request.Body.Close()
 
 	// Act
 	sut.ServeHTTP()
