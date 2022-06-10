@@ -128,15 +128,17 @@ type signUpModelValidatorSut struct {
 }
 
 func makeSignUpModelValidatorSut() signUpModelValidatorSut {
-	emailValidator := vt.NewValidatorMock(func(string) []v.Error {
-		return []v.Error{}
-	})
-
-	passwordValidator := vt.NewValidatorMock(
-		func(v.PasswordValidatorData) []v.Error {
+	emailValidator := vt.ValidatorMock[string]{
+		ValidateWith: func(string) []v.Error {
 			return []v.Error{}
 		},
-	)
+	}
+
+	passwordValidator := vt.ValidatorMock[v.PasswordValidatorData]{
+		ValidateWith: func(v.PasswordValidatorData) []v.Error {
+			return []v.Error{}
+		},
+	}
 
 	signUpModelValidator := NewSignUpModelValidator(
 		&emailValidator,

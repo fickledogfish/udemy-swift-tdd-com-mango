@@ -161,9 +161,11 @@ func makeHandlerSut(t *testing.T) handlerSut {
 
 	responseRecorder := httptest.NewRecorder()
 
-	modelValidator := vt.NewValidatorMock(func(models.SignUp) []v.Error {
-		return []v.Error{}
-	})
+	modelValidator := vt.ValidatorMock[models.SignUp]{
+		ValidateWith: func(models.SignUp) []v.Error {
+			return []v.Error{}
+		},
+	}
 
 	passwordHasher := ct.NewPasswordHasherMock(func(string) ([]byte, error) {
 		return []byte{}, nil

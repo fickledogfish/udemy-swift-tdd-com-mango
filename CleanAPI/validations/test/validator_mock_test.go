@@ -8,11 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func ExampleNewValidatorMock() {
-	emailValidator := NewValidatorMock(func(email string) []v.Error {
-		fmt.Printf("Email is %s\n", email)
-		return []v.Error{}
-	})
+func ExampleValidatorMock() {
+	emailValidator := ValidatorMock[string]{
+		ValidateWith: func(email string) []v.Error {
+			fmt.Printf("Email is %s\n", email)
+			return []v.Error{}
+		},
+	}
 
 	emailValidator.Validate("some_email@example.com")
 	// Output: Email is some_email@example.com
