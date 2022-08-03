@@ -10,7 +10,7 @@ import (
 	vt "example.com/api/validations/test"
 )
 
-func Test(t *testing.T) {
+func TestSignUpModelValidatorSuite(t *testing.T) {
 	suite.Run(t, new(signUpModelValidatorSuite))
 }
 
