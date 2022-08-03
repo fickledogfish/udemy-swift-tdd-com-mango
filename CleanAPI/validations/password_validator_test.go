@@ -3,40 +3,51 @@ package validations
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestValidateShouldReturnErrorIfConfirmationDoesntMatchPassword(t *testing.T) {
-	// Arrange
-	password := "123"
-	passwordConfirmation := "1234"
-
-	passValidator := NewPasswordValidator()
-
-	// Act
-	violations := passValidator.Validate(PasswordValidatorData{
-		Password:     password,
-		Confirmation: passwordConfirmation,
-	})
-
-	// Assert
-	assert.NotEmpty(t, violations)
-	assert.Contains(t, violations, passwordAndConfirmationMismatch())
+func TestPasswordValidatorSuite(t *testing.T) {
+	suite.Run(t, new(passwordValidatorSuite))
 }
 
-func TestValidateShouldntReturnMismatchWhenConfirmationMatchedPassword(t *testing.T) {
-	// Arrange
-	password := "123"
-	passwordConfirmation := password
+type passwordValidatorSuite struct {
+	suite.Suite
 
-	passValidator := NewPasswordValidator()
+	password             string
+	passwordConfirmation string
+
+	sut PasswordValidator
+}
+
+func (s *passwordValidatorSuite) SetupTest() {
+	s.password = "correct horse battery staple"
+	s.passwordConfirmation = s.password
+
+	s.sut = NewPasswordValidator()
+}
+
+func (s *passwordValidatorSuite) TestValidateShouldReturnErrorIfConfirmationDoesntMatchPassword() {
+	// Arrange
+	s.passwordConfirmation = s.password + "'"
 
 	// Act
-	violations := passValidator.Validate(PasswordValidatorData{
-		Password:     password,
-		Confirmation: passwordConfirmation,
+	violations := s.sut.Validate(PasswordValidatorData{
+		Password:     s.password,
+		Confirmation: s.passwordConfirmation,
 	})
 
 	// Assert
-	assert.NotContains(t, violations, passwordAndConfirmationMismatch())
+	s.Assert().NotEmpty(violations)
+	s.Assert().Contains(violations, passwordAndConfirmationMismatch())
+}
+
+func (s *passwordValidatorSuite) TestValidateShouldntReturnMismatchWhenConfirmationMatchedPassword() {
+	// Act
+	violations := s.sut.Validate(PasswordValidatorData{
+		Password:     s.password,
+		Confirmation: s.passwordConfirmation,
+	})
+
+	// Assert
+	s.Assert().NotContains(violations, passwordAndConfirmationMismatch())
 }
