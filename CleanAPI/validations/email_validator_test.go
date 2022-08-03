@@ -3,52 +3,54 @@ package validations
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestEnsureEmailValidatorImplementsValidation(t *testing.T) {
-	assert.Implements(t, (*Validation[string])(nil), new(EmailValidator))
+func TestEmailValidatorTestSuite(t *testing.T) {
+	suite.Run(t, new(emailValidatorSuite))
 }
 
-func TestValidEmailsShouldReturnNoErrors(t *testing.T) {
+type emailValidatorSuite struct {
+	suite.Suite
+
+	sut EmailValidator
+}
+
+func (s *emailValidatorSuite) SetupTest() {
+	s.sut = EmailValidator{}
+}
+
+func (s *emailValidatorSuite) TestEnsureEmailValidatorImplementsValidation() {
+	s.Assert().Implements((*Validation[string])(nil), s.sut)
+}
+
+func (s *emailValidatorSuite) TestValidEmailsShouldReturnNoErrors() {
 	for _, email := range []string{
 		"valid_email@example.com",
 		"another_valid_email@example.com",
 	} {
-		t.Logf("Checking %v", email)
-
-		// Arrange
-		sut := makeEmailVaidator()
+		s.T().Logf("Checking %v", email)
 
 		// Act
-		errors := sut.Validate(email)
+		errors := s.sut.Validate(email)
 
 		// Assert
-		assert.Empty(t, errors)
+		s.Assert().Empty(errors)
 	}
 }
 
-func TestInvalidEmailAddressShouldReturnInvalidEmailError(t *testing.T) {
+func (s *emailValidatorSuite) TestInvalidEmailAddressShouldReturnInvalidEmailError() {
 	for _, email := range []string{
 		"a",
 		"123@",
 	} {
-		t.Logf("Checking %v", email)
-
-		// Arrange
-		sut := makeEmailVaidator()
+		s.T().Logf("Checking %v", email)
 
 		// Act
-		errors := sut.Validate(email)
+		errors := s.sut.Validate(email)
 
 		// Assert
-		assert.NotEmpty(t, errors)
-		assert.Contains(t, errors, VErrInvalidEmail{})
+		s.Assert().NotEmpty(errors)
+		s.Assert().Contains(errors, VErrInvalidEmail{})
 	}
-}
-
-// Helper functions -----------------------------------------------------------
-
-func makeEmailVaidator() EmailValidator {
-	return EmailValidator{}
 }
