@@ -3,103 +3,127 @@ package models
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 
 	"example.com/api/models"
 	v "example.com/api/validations"
 	vt "example.com/api/validations/test"
 )
 
-func TestEnsureSignUpValidatorImplementsValidation(t *testing.T) {
-	assert.Implements(
-		t,
+func Test(t *testing.T) {
+	suite.Run(t, new(signUpModelValidatorSuite))
+}
+
+type signUpModelValidatorSuite struct {
+	suite.Suite
+
+	sut SignUpModelValidator
+
+	signUpModel models.SignUp
+
+	emailValidator    *vt.ValidatorMock[string]
+	passwordValidator *vt.ValidatorMock[v.PasswordValidatorData]
+}
+
+func (s *signUpModelValidatorSuite) SetupTest() {
+	s.emailValidator = &vt.ValidatorMock[string]{
+		ValidateWith: func(string) []v.Error {
+			return []v.Error{}
+		},
+	}
+
+	s.passwordValidator = &vt.ValidatorMock[v.PasswordValidatorData]{
+		ValidateWith: func(v.PasswordValidatorData) []v.Error {
+			return []v.Error{}
+		},
+	}
+
+	s.sut = NewSignUpModelValidator(
+		s.emailValidator,
+		s.passwordValidator,
+	)
+
+	s.signUpModel = models.SignUp{}
+}
+
+func (s *signUpModelValidatorSuite) TestEnsureSignUpValidatorImplementsValidation() {
+	s.Assert().Implements(
 		(*v.Validation[models.SignUp])(nil),
-		new(SignUpModelValidator),
+		s.sut,
 	)
 }
 
-func TestNewSignUpModelValidatorShouldInitializeAllFields(t *testing.T) {
-	// Arrange
-	sut := makeSignUpModelValidatorSut()
-
+func (s *signUpModelValidatorSuite) TestNewSignUpModelValidatorShouldInitializeAllFields() {
 	// Act
 	modelValidator := NewSignUpModelValidator(
-		sut.EmailValidator,
-		sut.PasswordValidator,
+		s.emailValidator,
+		s.passwordValidator,
 	)
 
 	// Assert
-	assert.NotNil(t, modelValidator.emailValidator)
-	assert.NotNil(t, modelValidator.passwordValidator)
+	s.Assert().NotNil(modelValidator.emailValidator)
+	s.Assert().NotNil(modelValidator.passwordValidator)
 }
 
-func TestValidateShouldSendTheCorrectEmailToTheEmailValidator(t *testing.T) {
+func (s *signUpModelValidatorSuite) TestValidateShouldSendTheCorrectEmailToTheEmailValidator() {
 	// Arrange
-	sut := makeSignUpModelValidatorSut()
-
 	expectedEmail := "expected_email@example.com"
 
 	var receivedEmail string
-	sut.EmailValidator.ValidateWith = func(email string) []v.Error {
+	s.emailValidator.ValidateWith = func(email string) []v.Error {
 		receivedEmail = email
 
 		return []v.Error{}
 	}
 
-	sut.SignUpModel.Email = expectedEmail
+	s.signUpModel.Email = expectedEmail
 
 	// Act
-	sut.SignUpModelValidator.Validate(sut.SignUpModel)
+	s.sut.Validate(s.signUpModel)
 
 	// Assert
-	assert.Equal(t, expectedEmail, receivedEmail)
+	s.Assert().Equal(expectedEmail, receivedEmail)
 }
 
-func TestValidateShouldReturnNothingIfAllValidatorsReturnNothing(t *testing.T) {
-	// Arrange
-	sut := makeSignUpModelValidatorSut()
-
+func (s *signUpModelValidatorSuite) TestValidateShouldReturnNothingIfAllValidatorsReturnNothing() {
 	// Act
-	errors := sut.SignUpModelValidator.Validate(models.SignUp{})
+	errors := s.sut.Validate(s.signUpModel)
 
 	// Assert
-	assert.Empty(t, errors)
+	s.Assert().Empty(errors)
 }
 
-func TestValidateShouldReportAllErrorsReportedByTheEmailValidator(t *testing.T) {
+func (s *signUpModelValidatorSuite) TestValidateShouldReportAllErrorsReportedByTheEmailValidator() {
 	// Arrange
-	sut := makeSignUpModelValidatorSut()
-
 	expectedErrors := []v.Error{
 		v.VErrInvalidEmail{},
 	}
 
-	sut.EmailValidator.ValidateWith = func(string) []v.Error {
+	s.emailValidator.ValidateWith = func(string) []v.Error {
 		return expectedErrors
 	}
 
 	// Act
-	errors := sut.SignUpModelValidator.Validate(models.SignUp{})
+	errors := s.sut.Validate(s.signUpModel)
 
 	// Assert
-	assert.NotEmpty(t, errors)
+	s.Assert().NotEmpty(errors)
 	for _, err := range expectedErrors {
-		assert.Contains(t, errors, err)
+		s.Assert().Contains(errors, err)
 	}
 }
 
-func TestValidateShouldSendTheCorrectPasswordToThePasswordValidator(t *testing.T) {
+func (s *signUpModelValidatorSuite) TestValidateShouldSendTheCorrectPasswordToThePasswordValidator() {
 	// Arrange
 	expectedPassword := "some_password"
 	expectedConfirmation := "some_password_confirmation"
 
-	sut := makeSignUpModelValidatorSut()
-	sut.SignUpModel.Password = expectedPassword
-	sut.SignUpModel.PasswordConfirmation = expectedConfirmation
+	s.signUpModel.Password = expectedPassword
+	s.signUpModel.PasswordConfirmation = expectedConfirmation
 
 	var receivedPassword string
 	var receivedConfirmation string
-	sut.PasswordValidator.ValidateWith = func(
+	s.passwordValidator.ValidateWith = func(
 		data v.PasswordValidatorData,
 	) []v.Error {
 		receivedPassword = data.Password
@@ -109,48 +133,9 @@ func TestValidateShouldSendTheCorrectPasswordToThePasswordValidator(t *testing.T
 	}
 
 	// Act
-	sut.SignUpModelValidator.Validate(sut.SignUpModel)
+	s.sut.Validate(s.signUpModel)
 
 	// Assert
-	assert.Equal(t, expectedPassword, receivedPassword)
-	assert.Equal(t, expectedConfirmation, receivedConfirmation)
-}
-
-// File SUT -------------------------------------------------------------------
-
-type signUpModelValidatorSut struct {
-	SignUpModel models.SignUp
-
-	EmailValidator    *vt.ValidatorMock[string]
-	PasswordValidator *vt.ValidatorMock[v.PasswordValidatorData]
-
-	SignUpModelValidator *SignUpModelValidator
-}
-
-func makeSignUpModelValidatorSut() signUpModelValidatorSut {
-	emailValidator := vt.ValidatorMock[string]{
-		ValidateWith: func(string) []v.Error {
-			return []v.Error{}
-		},
-	}
-
-	passwordValidator := vt.ValidatorMock[v.PasswordValidatorData]{
-		ValidateWith: func(v.PasswordValidatorData) []v.Error {
-			return []v.Error{}
-		},
-	}
-
-	signUpModelValidator := NewSignUpModelValidator(
-		&emailValidator,
-		&passwordValidator,
-	)
-
-	return signUpModelValidatorSut{
-		SignUpModel: models.SignUp{},
-
-		EmailValidator:    &emailValidator,
-		PasswordValidator: &passwordValidator,
-
-		SignUpModelValidator: &signUpModelValidator,
-	}
+	s.Assert().Equal(expectedPassword, receivedPassword)
+	s.Assert().Equal(expectedConfirmation, receivedConfirmation)
 }
